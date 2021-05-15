@@ -1,3 +1,4 @@
 /.vscode
 /venv
 .env
+cogs/__pycache__/queue.cpython-39.pyc
