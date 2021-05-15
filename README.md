@@ -10,3 +10,5 @@
   - Balanced by MMR
   - Random 
 
+## License ##
+GNU General Public License v3.0
