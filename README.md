@@ -10,5 +10,5 @@
   - Balanced by MMR
   - Random
 
-## License ##
-MIT License
+### License ###
+GNU General Public License v3.0
