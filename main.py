@@ -1,5 +1,8 @@
 import discord
+from dotenv import load_dotenv, find_dotenv
+import os
 
+load_dotenv(find_dotenv())
 client = discord.Client()
 
 @client.event
@@ -14,4 +17,4 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
-client.run('MzAxMTAwNzMxNjk4NjQyOTQ0.WOvz6A.wwLekPMjyhTPjcmOpb-wpDqTHhg')
+client.run(os.environ.get('BOT_TOKEN')) # TODO: generate new key
