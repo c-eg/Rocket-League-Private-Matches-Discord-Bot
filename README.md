@@ -10,5 +10,5 @@
   - Balanced by MMR
   - Random
 
-### License ###
+## License ##
 GNU General Public License v3.0
