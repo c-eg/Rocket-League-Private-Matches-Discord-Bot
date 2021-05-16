@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 import os
 
 load_dotenv(find_dotenv())  # load .env file
-bot = commands.Bot(command_prefix=';')
+bot = commands.Bot(command_prefix='!')
 
 
 @bot.event

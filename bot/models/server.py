@@ -7,6 +7,11 @@ class Server(object):
         self.__queue = []
         self.__games = []
 
+    def load_players_from_db(self):
+        # store all users in one table
+
+
+
     async def add_user(self, user):
         if user not in self.__queue:
             self.__queue.append(user)
