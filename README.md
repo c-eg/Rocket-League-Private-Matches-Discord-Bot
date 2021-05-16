@@ -1,6 +1,7 @@
 # Rocket League Private Matches Discord Bot #
+Currently under development.
 
-## Features ##
+## Planned Features ##
 - 6 person matches
 - 4 person matches
 - Multiple games on same server
