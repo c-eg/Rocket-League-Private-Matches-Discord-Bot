@@ -2,3 +2,4 @@
 /venv
 .env
 /cogs/__pycache__
+/models\__pycache__
