@@ -1,10 +1,13 @@
 import discord
 
+# TODO: make this abstract class to then create a 'Captains',
+# 'Balanced' or 'Random' subclass games
+
 
 class Game(object):
     def __init__(self, users):
-        self.__team_one = set()
-        self.__team_two = set()
+        self.__team_one = []
+        self.__team_two = []
 
         self.assign_teams(users)
 
