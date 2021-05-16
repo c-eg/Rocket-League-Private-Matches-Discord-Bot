@@ -1,20 +1,21 @@
 from discord import user
 import models.game
 import discord
-from queue import Queue
 from models.game import Game
 
 
 class Server(object):
     def __init__(self, game_size=6):
         self.__game_size = game_size
-        self.__queue = []  # TODO: Change to something so I can access in order added but also keep in data structure while looping through it
+        self.__queue = []
         self.__games = []
 
     async def add_user(self, user):
-        self.__queue.append(user)
-        if await self.check_queue():
-            await self.create_game()
+        if user not in self.__queue:
+            self.__queue.append(user)
+
+            if await self.check_queue():
+                await self.create_game()
 
     async def remove_user(self, user):
         self.__queue.remove(user)
@@ -27,10 +28,7 @@ class Server(object):
             return True
     
     async def get_users_in_queue(self):
-        users = []
-        for user in self.__queue:
-            users.append(user.name)
-        return users
+        return self.__queue.to_list()
 
     async def create_game(self):
         users = []
