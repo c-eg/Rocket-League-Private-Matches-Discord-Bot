@@ -1,5 +1,13 @@
+import discord
+
+
 class Game(object):
-    def __init__(self, max_players=6):
-        self.max_players = max_players
-        self.team_one = []
-        self.team_two = []
+    def __init__(self, users):
+        self.__team_one = set()
+        self.__team_two = set()
+
+        self.assign_teams(users)
+
+    async def assign_teams(self, users):
+        pass
+        # TODO: Assign teams here

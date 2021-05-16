@@ -1,18 +1,18 @@
 import discord
 from discord.ext import commands
+import models.server
 
 
 class Queue(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.users = []
 
     @commands.command()
-    async def queue(self, ctx):
-        self.users.append(ctx.author)
-        temp = ', '.join(user.name for user in self.users)
-
-        await ctx.send(temp)
+    async def queue(self, ctx: commands.Context):
+        server = await self.bot.get_cog('Bot').get_server(ctx.guild)
+        await server.add_user(ctx.author)
+        users = await server.get_users_in_queue()
+        await ctx.send(str(users))
 
 
 def setup(bot):

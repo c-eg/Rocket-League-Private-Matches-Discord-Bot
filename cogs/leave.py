@@ -8,9 +8,8 @@ class Leave(commands.Cog):
 
     @commands.command()
     async def leave(self, ctx):
-        users = self.bot.get_cog('Queue').users
-        temp = ', '.join(user.name for user in users)
-        await ctx.send(temp)
+        pass
+        # TODO: implement this
 
 
 def setup(bot):

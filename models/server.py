@@ -1,4 +1,44 @@
+from discord import user
+import models.game
+import discord
+from queue import Queue
+from models.game import Game
+
+
 class Server(object):
-    def __init__(self):
-        self.queue = []
-        self.games = []
+    def __init__(self, game_size=6):
+        self.__game_size = game_size
+        self.__queue = []  # TODO: Change to something so I can access in order added but also keep in data structure while looping through it
+        self.__games = []
+
+    async def add_user(self, user):
+        self.__queue.append(user)
+        if await self.check_queue():
+            await self.create_game()
+
+    async def remove_user(self, user):
+        self.__queue.remove(user)
+
+    async def size(self):
+        return len(self.__queue)
+
+    async def check_queue(self):
+        if await self.size() >= self.__game_size:
+            return True
+    
+    async def get_users_in_queue(self):
+        users = []
+        for user in self.__queue:
+            users.append(user.name)
+        return users
+
+    async def create_game(self):
+        users = []
+
+        for i in range(self.__game_size):
+            users.append(self.__queue.get())
+
+        # TODO: Generate way to differentate voting for games
+
+        game = Game(users)
+        self.__games.append(game)

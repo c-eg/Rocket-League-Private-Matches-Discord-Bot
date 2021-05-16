@@ -15,6 +15,6 @@ async def on_ready():
 for file in os.listdir('./cogs'):
     if file.endswith('.py'):
         bot.load_extension(f'cogs.{file[:-3]}')
-        print(f'Loaded {file}')
+        print(f'Loaded cogs/{file}')
 
 bot.run(os.environ.get('BOT_TOKEN'))
