@@ -1,4 +1,4 @@
-from models.game import Game
+from bot.models.game import Game
 
 
 class Server(object):
@@ -7,29 +7,24 @@ class Server(object):
         self.__queue = []
         self.__games = []
 
-    def load_players_from_db(self):
-        # store all users in one table
-
-
-
-    async def add_user(self, user):
+    def add_user(self, user):
         if user not in self.__queue:
             self.__queue.append(user)
 
-            if await self.check_queue():
-                await self.create_game()
+            if self.check_queue():
+                self.create_game()
 
-    async def remove_user(self, user):
+    def remove_user(self, user):
         self.__queue.remove(user)
 
-    async def check_queue(self):
+    def check_queue(self):
         if len(self.__queue) >= self.__game_size:
             return True
 
-    async def get_users_in_queue(self):
+    def get_users_in_queue(self):
         return self.__queue
 
-    async def create_game(self):
+    def create_game(self):
         users = []
 
         for i in range(self.__game_size):

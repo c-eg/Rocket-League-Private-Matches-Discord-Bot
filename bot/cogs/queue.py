@@ -15,9 +15,9 @@ class Queue(commands.Cog):
 
     @commands.command()
     async def queue(self, ctx: commands.Context):
-        server = await self.bot.get_cog('Bot').get_server(ctx.guild)
-        await server.add_user(ctx.author)
-        users = await server.get_users_in_queue()
+        server = self.bot.get_cog('Servers').get_server(ctx.guild)
+        server.add_user(ctx.author)
+        users = server.get_users_in_queue()
         message = queue_started.copy()
         message.add_field(
             name='Queue Started!',

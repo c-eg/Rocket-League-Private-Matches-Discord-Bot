@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sqlite3
 
 
@@ -11,14 +12,11 @@ class Database(object):
         self.connection.commit()
         self.connection.close()
 
-    def execute_query(self, query):
-        try:
-            self.cursor.execute(query)
-            self.connection.commit()
-        except Exception as e:
-            print(f'Exception: {e}')
-
     def create_tables(self, ddl_location):
         """Function to run the DDL for the database"""
         with open(ddl_location, "r") as ddl:
-            self.connection.executescript(ddl.read())
+            try:
+                self.cursor.execute(ddl.read())
+                self.connection.commit()
+            except Exception as e:
+                print(f'Exception: {e}')
