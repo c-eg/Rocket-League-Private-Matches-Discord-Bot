@@ -1,22 +1,63 @@
 # -*- coding: utf-8 -*-
-import sqlite3
+from os.path import isfile
+from sqlite3 import connect
 
+from apscheduler.triggers.cron import CronTrigger
 
-class Database(object):
-    def __init__(self, db_location):
-        self.__db_location = db_location
-        self.connection = sqlite3.connect(self.__db_location)
-        self.cursor = self.connection.cursor()
+DB_PATH = "./db/database.db"
+DDL_PATH = "./db/DDL.sql"
 
-    def __exit__(self):
-        self.connection.commit()
-        self.connection.close()
+cxn = connect(DB_PATH, check_same_thread=False)
+cur = cxn.cursor()
 
-    def create_tables(self, ddl_location):
-        """Function to run the DDL for the database"""
-        with open(ddl_location, "r") as ddl:
-            try:
-                self.cursor.execute(ddl.read())
-                self.connection.commit()
-            except Exception as e:
-                print(f'Exception: {e}')
+def with_commit(func):
+	def inner(*args, **kwargs):
+		func(*args, **kwargs)
+		commit()
+
+	return inner
+
+@with_commit
+def build():
+	if isfile(DDL_PATH):
+		scriptexec(DDL_PATH)
+
+def commit():
+	cxn.commit()
+
+def auto_save(sched):
+	sched.add_job(commit, CronTrigger(second=0))
+
+def close():
+	cxn.close()
+
+def field(command, *values):
+	cur.execute(command, tuple(values))
+
+	if (fetch := cur.fetchone()) is not None:
+		return fetch[0]
+
+def record(command, *values):
+	cur.execute(command, tuple(values))
+
+	return cur.fetchone()
+
+def records(command, *values):
+	cur.execute(command, tuple(values))
+
+	return cur.fetchall()
+
+def column(command, *values):
+	cur.execute(command, tuple(values))
+
+	return [item[0] for item in cur.fetchall()]
+
+def execute(command, *values):
+	cur.execute(command, tuple(values))
+
+def multiexec(command, valueset):
+	cur.executemany(command, valueset)
+
+def scriptexec(path):
+	with open(path, "r", encoding="utf-8") as script:
+		cur.executescript(script.read())

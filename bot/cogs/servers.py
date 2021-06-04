@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import discord
 from discord.ext import commands
-from bot.models.server import Server
-from bot.db.database import Database
+from bot.models import server
+from bot.db import database
 
 
 class Servers(commands.Cog):
@@ -21,16 +21,15 @@ class Servers(commands.Cog):
         activeservers = self.bot.guilds
 
         for guild in activeservers:
-            s = Server()
+            s = server.Server()
             self.add_server(guild, s)
 
     def __add_db_players(self):
-        db = Database("db/database.db")
         sql = 'SELECT * FROM player'
-        for row in db.cursor.execute(sql):
+        for row in database.records(sql):
             self.__players[row[0]] = row[1]
 
-    def add_server(self, guild: discord.Guild, server: Server):
+    def add_server(self, guild: discord.Guild, server: server.Server):
         self.__servers[guild] = server
 
     def get_server(self, guild: discord.Guild):

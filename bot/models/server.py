@@ -30,7 +30,7 @@ class Server(object):
         for i in range(self.__game_size):
             users.append(self.__queue.pop(i))
 
-        # TODO: Generate way to differentate voting for games
+        # TODO: Generate way to differentiate voting for games
 
         game = Game(users)
         self.__games.append(game)

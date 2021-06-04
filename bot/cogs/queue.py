@@ -4,9 +4,12 @@ import discord
 
 queue_started = discord.Embed(
     title='Private Matches',
-    colour=discord.Colour.dark_red(),
+    colour=discord.Colour.dark_red()
 )
-queue_started.set_footer(text='Rocket League Private Matches Discord Bot', icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg')
+queue_started.set_footer(
+    text='Rocket League Private Matches Discord Bot',
+    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
+)
 
 
 class Queue(commands.Cog):
