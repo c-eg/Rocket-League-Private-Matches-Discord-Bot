@@ -19,4 +19,5 @@ for cog in COGS:
     bot.load_extension(f'cogs.{cog}')
     print(f'Loaded {cog}')
 
-bot.run(os.environ.get('BOT_TOKEN'))
+
+bot.run(os.environ.get('BOT_TOKEN'))  # run bot

@@ -11,53 +11,114 @@ cxn = connect(DB_PATH, check_same_thread=False)
 cur = cxn.cursor()
 
 def with_commit(func):
+	"""
+	Commits to the database, usage: @with_commit
+	"""
 	def inner(*args, **kwargs):
 		func(*args, **kwargs)
 		commit()
 
 	return inner
 
+
 @with_commit
 def build():
+	"""
+	Creates all necessary tables in sqlite3 database
+	:return: void
+	"""
 	if isfile(DDL_PATH):
 		scriptexec(DDL_PATH)
 
+
 def commit():
+	"""
+	Commits to the database
+	:return: void
+	"""
 	cxn.commit()
 
-def auto_save(sched):
-	sched.add_job(commit, CronTrigger(second=0))
+
+def auto_save(scheduler):
+	"""
+	Auto saves the database
+	:param scheduler: scheduler
+	:return: void
+	"""
+	# TODO: implement this
+	scheduler.add_job(commit, CronTrigger(second=0))
+
 
 def close():
+	"""
+	Closes the connection to the database
+	:return: void
+	"""
 	cxn.close()
 
-def field(command, *values):
-	cur.execute(command, tuple(values))
 
-	if (fetch := cur.fetchone()) is not None:
-		return fetch[0]
+# def field(command, *values):
+# 	cur.execute(command, tuple(values))
+#
+# 	if (fetch := cur.fetchone()) is not None:
+# 		return fetch[0]
+
 
 def record(command, *values):
+	"""
+	Gets a single record from the database
+	:param command: SQL to run
+	:param values: args
+	:return: row from database
+	"""
 	cur.execute(command, tuple(values))
 
 	return cur.fetchone()
 
+
 def records(command, *values):
+	"""
+	Gets multiple records from the database
+	:param command: SQL to run
+	:param values: args
+	:return: rows from database
+	"""
 	cur.execute(command, tuple(values))
 
 	return cur.fetchall()
 
-def column(command, *values):
-	cur.execute(command, tuple(values))
 
-	return [item[0] for item in cur.fetchall()]
+# def column(command, *values):
+# 	cur.execute(command, tuple(values))
+#
+# 	return [item[0] for item in cur.fetchall()]
+
 
 def execute(command, *values):
+	"""
+	Runs an SQL command
+	:param command: SQL to run
+	:param values: args
+	:return: void
+	"""
 	cur.execute(command, tuple(values))
 
+
 def multiexec(command, valueset):
+	"""
+	Executes the same command many times
+	:param command: command to execute
+	:param valueset: sequence of parameters
+	:return:
+	"""
 	cur.executemany(command, valueset)
 
+
 def scriptexec(path):
+	"""
+	Executes multiple SQL statements at once
+	:param path: path to SQL statements
+	:return: void
+	"""
 	with open(path, "r", encoding="utf-8") as script:
 		cur.executescript(script.read())
