@@ -1,4 +1,6 @@
 # Rocket League Private Matches Discord Bot #
+[![License](https://img.shields.io/github/license/c-eg/Rocket-League-Private-Matches-Discord-Bot)](LICENSE)
+
 Currently under development.
 
 ## Planned Features ##
