@@ -7,6 +7,9 @@ class Server(object):
         self.__queue = []
         self.__games = []
 
+    def get_game_size(self):
+        return self.__game_size
+
     def add_user(self, user):
         """
         Adds a user to the server's queue

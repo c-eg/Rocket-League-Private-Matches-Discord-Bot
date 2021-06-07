@@ -1,16 +1,24 @@
-import discord
+import abc
 
 # TODO: make this abstract class to then create a 'Captains',
 # 'Balanced' or 'Random' subclass games
 
 
-class Game(object):
-    def __init__(self, users):
+class Game:
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, players: list):
         self.__team_one = []
         self.__team_two = []
+        players.sort(key=lambda x: x.__mmr, reverse=False)
+        self.__users = players
 
-        self.assign_teams(users)
+    @abc.abstractmethod
+    def assign_teams(self):
+        return
 
-    async def assign_teams(self, users):
-        pass
-        # TODO: Assign teams here
+    def get_team_one(self):
+        return self.__team_one
+
+    def get_team_two(self):
+        return self.__team_two
