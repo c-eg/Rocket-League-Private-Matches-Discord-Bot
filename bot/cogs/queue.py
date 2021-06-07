@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 
-from bot.models.player import Player
-
 queue_message = discord.Embed(
     title='Private Matches',
     colour=discord.Colour.dark_red()

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 import os
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv, find_dotenv
+from bot.db import database
 
 from discord.ext import commands
 
@@ -12,6 +15,9 @@ COGS = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
 
 @bot.event
 async def on_ready():
+    scheduler = AsyncIOScheduler()
+    database.auto_save(scheduler)
+    scheduler.start()
     print('Bot successfully started!')
 
 for cog in COGS:

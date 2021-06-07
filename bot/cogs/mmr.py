@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 
 from bot.db import database
-from bot.models.player import Player
 
 queue_message = discord.Embed(
     title='Private Matches',
@@ -10,7 +9,8 @@ queue_message = discord.Embed(
 )
 queue_message.set_footer(
     text='Rocket League Private Matches Discord Bot',
-    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
+    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/imag'
+             'es/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
 )
 
 
@@ -19,30 +19,28 @@ class MatchMakingRating(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def mmr(self, ctx: commands.Context):
-        discord_id = ctx.author.id
-        player = None
+    async def mmr(self, ctx: commands.Context, user=None):
+        user_to_check = ctx.author
 
-        # TODO: Make work when a user is passed as an argument,
-        #  checking the passed user's mmr
-
-        try:
-            player = self.bot.get_cog('Servers').get_player(discord_id)
-        except KeyError:
-            pass
+        if user is not None:
+            user_to_check = await self.bot.fetch_user(user[3:-1])
 
         message = queue_message.copy()
 
-        if player is None:
+        sql = 'SELECT mmr FROM player WHERE discord_id = ?'
+        result = database.field(sql, user_to_check.id)
+
+        if result is None:
             message.add_field(
                 name='Match Making Rating!',
-                value=ctx.author.mention + ' has not set their MMR! Type `;setmmr <amount>` to set it.',
+                value=user_to_check.mention + ' has not set their MMR! Type '
+                                              '`;setmmr <amount>` to set it.',
                 inline=False
             )
         else:
             message.add_field(
                 name='Match Making Rating!',
-                value=ctx.author.mention + ': ' + str(player.get_mmr()),
+                value=user_to_check.mention + ': ' + str(result),
                 inline=False
             )
 
@@ -50,30 +48,18 @@ class MatchMakingRating(commands.Cog):
 
     @commands.command()
     async def setmmr(self, ctx: commands.Context, mmr: int):
-        # TODO: Watch video on autosaving database.db
-        #  might have to change this to update the player dictionary to then be autosaved by the scheduler
+        sql = 'SELECT * FROM player WHERE discord_id = ?'
+        user = database.record(sql, ctx.author.id)
 
-        s = self.bot.get_cog('Servers')
-        p = None
-
-        try:
-            p = s.get_player(ctx.author.id)
-        except KeyError:
-            pass
-
-        if p is None:
-            s.add_player(Player(discord_id=ctx.author.id, mmr=mmr))
+        # if user is db, update
+        if user is None:
             sql = 'INSERT INTO player (discord_id, mmr) VALUES (?, ?)'
             database.execute(sql, ctx.author.id, mmr)
+        # else, add user to db
         else:
             sql = 'UPDATE player SET mmr = ? WHERE discord_id = ?'
             database.execute(sql, mmr, ctx.author.id)
 
-        database.commit()
 
 def setup(bot):
     bot.add_cog(MatchMakingRating(bot))
-
-
-
-
