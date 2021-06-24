@@ -11,7 +11,9 @@ from discord.ext import commands
 load_dotenv(find_dotenv())  # load .env file
 bot = commands.Bot(command_prefix=';')
 
-COGS = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
+COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
+print(COGS)
+
 
 @bot.event
 async def on_ready():
@@ -20,9 +22,10 @@ async def on_ready():
     scheduler.start()
     print('Bot successfully started!')
 
+
+# TODO: Fix this, doesn't work on ubuntu
 for cog in COGS:
     bot.load_extension(f'cogs.{cog}')
     print(f'Loaded {cog}')
-
 
 bot.run(os.environ.get('BOT_TOKEN'))  # run bot
