@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import discord
 from discord.ext import commands
 
-from bot.db import database
+from db import database
 
 queue_message = discord.Embed(
     title='Private Matches',
@@ -9,8 +10,7 @@ queue_message = discord.Embed(
 )
 queue_message.set_footer(
     text='Rocket League Private Matches Discord Bot',
-    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/imag'
-             'es/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
+    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
 )
 
 
@@ -20,6 +20,12 @@ class MatchMakingRating(commands.Cog):
 
     @commands.command()
     async def mmr(self, ctx: commands.Context, user=None):
+        """
+        Command to check a users match making rating
+        :param ctx: Commands context
+        :param user: user to check
+        :return: void
+        """
         user_to_check = ctx.author
 
         if user is not None:
@@ -33,8 +39,7 @@ class MatchMakingRating(commands.Cog):
         if result is None:
             message.add_field(
                 name='Match Making Rating!',
-                value=user_to_check.mention + ' has not set their MMR! Type '
-                                              '`;setmmr <amount>` to set it.',
+                value=user_to_check.mention + ' has not set their MMR! Type `;setmmr <amount>` to set it.',
                 inline=False
             )
         else:
@@ -48,6 +53,12 @@ class MatchMakingRating(commands.Cog):
 
     @commands.command()
     async def setmmr(self, ctx: commands.Context, mmr: int):
+        """
+        Command to set the current users match making rating
+        :param ctx: Command context
+        :param mmr: match making rating
+        :return: void
+        """
         sql = 'SELECT * FROM player WHERE discord_id = ?'
         user = database.record(sql, ctx.author.id)
 

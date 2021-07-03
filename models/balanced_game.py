@@ -1,8 +1,9 @@
 from abc import ABC
 
-import game
+from models.game import Game
 
-class BalancedGame(game.Game, ABC):
+
+class BalancedGame(Game, ABC):
     def __init__(self, players):
         super().__init__(players)
 

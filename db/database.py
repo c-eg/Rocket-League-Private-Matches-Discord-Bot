@@ -10,6 +10,7 @@ DDL_PATH = "./db/DDL.sql"
 cxn = connect(DB_PATH, check_same_thread=False)
 cur = cxn.cursor()
 
+
 def with_commit(func):
     """
     Commits to the database, usage: @with_commit

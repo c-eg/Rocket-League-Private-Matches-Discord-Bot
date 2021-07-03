@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from discord.ext import commands
-from bot.models import server
-from bot.db import database
+from models.game_handler import GameHandler
 
 
 class Servers(commands.Cog):
@@ -17,41 +16,42 @@ class Servers(commands.Cog):
     def __add_active_servers(self):
         """
         Adds all servers using this bot to a dictionary
-        (key: guild, value: Server object)
+        (key: guild, value: [GameHandler, GameHandler])
         :return: void
         """
         active_servers = self.bot.guilds
 
         for guild in active_servers:
-            s = server.Server()
-            self.add_server(guild, s)
+            self.add_guild(guild)
 
-    def add_server(self, guild, serv):
+    def add_guild(self, guild):
         """
-        Adds a server to the dictionary of Servers
+        Adds a server to the dictionary
         :param guild: guild of server
-        :param serv: Server object
         :return: true if added, false if already in
         """
         if self.__servers.get(guild) is None:
-            self.__servers[guild] = serv
-            return True
-        else:
-            return False
+            four = GameHandler(4)  # 4 man queue
+            six = GameHandler(6)  # 6 man queue
 
-    def get_server(self, guild):
+            self.__servers[guild] = [four, six]
+            return True
+
+        return False
+
+    def get_guild(self, guild):
         """
-        Gets server from servers dictionary
+        Gets GameHandler(s) from dictionary
         :param guild: guild of server
-        :return: Server object
+        :return: list of GameHandler objects
         """
-        s = self.__servers.get(guild)
-        if s is not None:
-            return s
+        four, six = self.__servers.get(guild)
+
+        if four is not None and six is not None:
+            return four, six
         else:
             raise KeyError('Server not found in servers dict')
 
 
 def setup(bot):
     bot.add_cog(Servers(bot))
-

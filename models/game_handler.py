@@ -1,8 +1,8 @@
-from .game import Game
+from models.game import Game
 
 
-class Server(object):
-    def __init__(self, game_size=6):
+class GameHandler(object):
+    def __init__(self, game_size):
         self.__game_size = game_size
         self.__queue = []
         self.__games = []
