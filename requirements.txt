@@ -5,7 +5,7 @@ chardet==4.0.0
 discord.py==1.7.3
 idna==3.2
 multidict==5.1.0
-python-dotenv==0.18.0
+python-dotenv==0.19.0
 typing-extensions==3.10.0.0
 yarl==1.6.3
 APScheduler~=3.7.0
