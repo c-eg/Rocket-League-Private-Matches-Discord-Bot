@@ -39,7 +39,7 @@ class Servers(commands.Cog):
 
         return False
 
-    def get_guild(self, guild):
+    def get_game_handlers(self, guild):
         """
         Gets GameHandler(s) from dictionary
         :param guild: guild of server

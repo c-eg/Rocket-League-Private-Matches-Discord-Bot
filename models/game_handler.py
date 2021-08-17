@@ -5,7 +5,7 @@ class GameHandler(object):
     def __init__(self, game_size):
         self.__game_size = game_size
         self.__queue = []
-        self.__games = []
+        # self.__games = []
 
     def get_game_size(self):
         return self.__game_size
@@ -20,9 +20,8 @@ class GameHandler(object):
             self.__queue.append(user)
 
             # check if a game should be created
-            if self.check_queue():
-                self.create_game()
-
+            # if self.check_queue():
+            #     self.create_game()
             return True
         else:
             return False
@@ -62,5 +61,6 @@ class GameHandler(object):
 
         # TODO: Generate way to differentiate voting for games
 
-        game = Game(users)
-        self.__games.append(game)
+        # game = Game(users)
+        # self.__games.append(game)
+        return Game(users)

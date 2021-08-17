@@ -18,36 +18,51 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
-        print(ctx.message.channel.name) # this works btw
+        print(ctx.message.channel.name)  # this works btw
 
-        # server = self.bot.get_cog('Servers').get_server(ctx.guild)  # get server user is on
-        # server.add_user(ctx.author)  # add user to server's queue
-        #
-        # users = server.get_users_in_queue()
-        # message = queue_message.copy()
-        #
-        # if len(users) == 1:
-        #     message.add_field(
-        #         name='Queue Started!',
-        #         value=ctx.author.mention + ' has started a queue, type `;q` or `;queue` to join!',
-        #         inline = False
-        #     )
-        # elif 1 < len(users) < server.get_game_size():
-        #     message.add_field(
-        #         name='User Joined Queue!',
-        #         value=ctx.author.mention + ' joined the queue.',
-        #         inline=False
-        #     )
-        #     message.add_field(
-        #         name='Users in Queue: ' + str(len(users)),
-        #         value=', '.join(user.mention for user in users),
-        #         inline=False
-        #     )
-        # else:
-        #     pass
-        #     # create game
-        #
-        # await ctx.channel.send(embed=message)
+        four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
+        added = six.add_user(ctx.author)
+        
+        message = queue_message.copy()
+
+        if added is True:
+            users_in_queue = six.get_users_in_queue()
+
+            if users_in_queue == 1:
+                message.add_field(
+                    name='Queue Started!',
+                    value=ctx.author.mention + ' has started a queue, type `;q` or `;queue` to join!',
+                    inline=False
+                )
+            else:
+                message.add_field(
+                    name='User Joined Queue!',
+                    value=ctx.author.mention + ' joined the queue, type `;q` or `;queue` to join!',
+                    inline=False
+                )
+                message.add_field(
+                    name='Users in Queue: ' + str(len(users_in_queue)),
+                    value=', '.join(user.mention for user in users_in_queue),
+                    inline=False
+                )
+
+            if six.check_queue() is True:
+                # TODO: maybe make this async so users can queue while others are voting?
+                # maybe a way of doing this would be to make an async function in this file
+                # which sends a message and awaits for user votes
+                #    would probs need a reaction listener or something
+                # 
+                game = six.create_game()
+
+            await ctx.channel.send(embed=message)
+
+        """
+        Message to future me working on this:
+        - Figure out how to create a game and handle the voting stuff
+            without preventing other users using commands
+        - For voting, get the reaction system to work (looks good)
+        - Future: add 4 man handling (currently only doing 6)
+        """
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
