@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+
 import discord
 from discord import client
 from discord.ext import commands
+
+from models.game_handler import GameHandler
 
 embed_template = discord.Embed(
     title='Private Matches',
@@ -16,16 +19,16 @@ embed_template.set_footer(
 class Queue(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.game_handler = GameHandler(6)
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
         print(ctx.message.channel.name)  # this works btw
 
-        four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
-        added = six.add_user(ctx.author)
+        added = self.game_handler.add_user(ctx.author)
 
         if added is True:
-            users_in_queue = six.get_users_in_queue()
+            users_in_queue = self.game_handler.get_users_in_queue()
             embed = embed_template.copy()
 
             if users_in_queue == 1:
@@ -73,13 +76,11 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
-        four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
-
         message = embed_template.copy()
-        users_in_queue = six.get_users_in_queue()
+        users_in_queue = self.game_handler.get_users_in_queue()
 
         if ctx.author in users_in_queue:
-            six.remove_user(ctx.author)  # remove user from queue
+            self.game_handler.remove_user(ctx.author)  # remove user from queue
 
             message.add_field(
                 name='User Left the Queue!',

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import abc
 
 # TODO: make this abstract class to then create a 'Captains',
