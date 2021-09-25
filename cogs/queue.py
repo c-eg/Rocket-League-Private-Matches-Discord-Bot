@@ -2,11 +2,11 @@
 import discord
 from discord.ext import commands
 
-queue_message = discord.Embed(
+message_template = discord.Embed(
     title='Private Matches',
     colour=discord.Colour.dark_red()
 )
-queue_message.set_footer(
+message_template.set_footer(
     text='Rocket League Private Matches Discord Bot',
     icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
 )
@@ -22,8 +22,8 @@ class Queue(commands.Cog):
 
         four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
         added = six.add_user(ctx.author)
-        
-        message = queue_message.copy()
+
+        message = message_template.copy()
 
         if added is True:
             users_in_queue = six.get_users_in_queue()
@@ -31,49 +31,64 @@ class Queue(commands.Cog):
             if users_in_queue == 1:
                 message.add_field(
                     name='Queue Started!',
-                    value=ctx.author.mention + ' has started a queue, type `;q` or `;queue` to join!',
+                    value=f'{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!',
                     inline=False
                 )
             else:
                 message.add_field(
-                    name='User Joined Queue!',
-                    value=ctx.author.mention + ' joined the queue, type `;q` or `;queue` to join!',
+                    name='User Joined the Queue!',
+                    value=f'{ctx.author.mention} joined the queue, type `;q` or `;queue` to join!',
                     inline=False
                 )
                 message.add_field(
-                    name='Users in Queue: ' + str(len(users_in_queue)),
+                    name=f'Users in Queue: {str(len(users_in_queue))}',
                     value=', '.join(user.mention for user in users_in_queue),
                     inline=False
                 )
 
             if six.check_queue() is True:
-                # TODO: maybe make this async so users can queue while others are voting?
-                # maybe a way of doing this would be to make an async function in this file
-                # which sends a message and awaits for user votes
-                #    would probs need a reaction listener or something
-                # 
                 game = six.create_game()
+
+                # send message with votes
+
+                # listen for votes
+
+                # set timer for 2 mins
 
             await ctx.channel.send(embed=message)
 
-        """
-        Message to future me working on this:
-        - Figure out how to create a game and handle the voting stuff
-            without preventing other users using commands
-        - For voting, get the reaction system to work (looks good)
-        - Future: add 4 man handling (currently only doing 6)
-        """
-
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
-        server = self.bot.get_cog('Servers').get_server(ctx.guild)  # get server user is on
-        server.remove_user(ctx.author)  # add user to server's queue
+        four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
 
-        # TODO: make message embed for user left
+        message = message_template.copy()
+        users_in_queue = six.get_users_in_queue()
 
-        message = queue_message.copy()
+        if ctx.author in users_in_queue:
+            six.remove_user(ctx.author)  # remove user from queue
 
-        await ctx.channel.send(embed=message)
+            message.add_field(
+                name='User Left the Queue!',
+                value=f'{ctx.author.mention} left the queue.',
+                inline=False
+            )
+
+            if len(users_in_queue) > 0:
+                message.add_field(
+                    name=f'Users in Queue: {str(len(users_in_queue))}',
+                    value=', '.join(user.mention for user in users_in_queue),
+                    inline=False
+                )
+            else:
+                message.add_field(
+                    name=f'Queue Empty!',
+                    value='To restart the queue, type `;q` or `;queue`',
+                    inline=False
+                )
+
+            await ctx.channel.send(embed=message)
+        else:
+            await ctx.channel.send(f'You are not in the queue {ctx.author.mention}')
 
 
 def setup(bot):
