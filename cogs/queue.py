@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import discord
+from discord import client
 from discord.ext import commands
 
-message_template = discord.Embed(
+embed_template = discord.Embed(
     title='Private Matches',
     colour=discord.Colour.dark_red()
 )
-message_template.set_footer(
-    text='Rocket League Private Matches Discord Bot',
-    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
+embed_template.set_footer(
+    text='Bot created by curpha',
+    icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
 )
 
 
@@ -23,45 +24,58 @@ class Queue(commands.Cog):
         four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
         added = six.add_user(ctx.author)
 
-        message = message_template.copy()
-
         if added is True:
             users_in_queue = six.get_users_in_queue()
+            embed = embed_template.copy()
 
             if users_in_queue == 1:
-                message.add_field(
+                embed.add_field(
                     name='Queue Started!',
                     value=f'{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!',
                     inline=False
                 )
             else:
-                message.add_field(
+                embed.add_field(
                     name='User Joined the Queue!',
                     value=f'{ctx.author.mention} joined the queue, type `;q` or `;queue` to join!',
                     inline=False
                 )
-                message.add_field(
+                embed.add_field(
                     name=f'Users in Queue: {str(len(users_in_queue))}',
                     value=', '.join(user.mention for user in users_in_queue),
                     inline=False
                 )
 
-            if six.check_queue() is True:
-                game = six.create_game()
+            await ctx.channel.send(embed=embed)
 
-                # send message with votes
+            # if six.check_queue() is True:
+            if len(users_in_queue) == 1:
+                # game = six.create_game()
 
-                # listen for votes
+                embed = embed_template.copy()
 
-                # set timer for 2 mins
+                embed.add_field(
+                    name='Game Created!',
+                    value=', '.join(user.mention for user in users_in_queue),
+                    inline=False
+                )
 
-            await ctx.channel.send(embed=message)
+                embed.add_field(
+                    name='Vote for Balancing Method!!',
+                    value=f'🇧 for Balanced Teams\n🇨 for Captains\n🇷 for Random Teams',
+                    inline=False
+                )
+
+                message = await ctx.channel.send(embed=embed)
+                await message.add_reaction("🇧")
+                await message.add_reaction("🇨")
+                await message.add_reaction("🇷")
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
         four, six = self.bot.get_cog('Servers').get_game_handlers(ctx.guild)  # get game handlers
 
-        message = message_template.copy()
+        message = embed_template.copy()
         users_in_queue = six.get_users_in_queue()
 
         if ctx.author in users_in_queue:
