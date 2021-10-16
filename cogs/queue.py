@@ -51,9 +51,9 @@ class Queue(commands.Cog):
 
             await ctx.channel.send(embed=embed)
 
-            # if six.check_queue() is True:
-            if len(users_in_queue) == 1:
-                # game = six.create_game()
+            # if self.game_handler.check_queue() is True:
+            if len(users_in_queue) == 1:  # testing
+                # game = self.game_handler.create_game()
 
                 embed = embed_template.copy()
 
@@ -73,6 +73,15 @@ class Queue(commands.Cog):
                 await message.add_reaction("🇧")
                 await message.add_reaction("🇨")
                 await message.add_reaction("🇷")
+
+                """
+                MESSAGE TO FUTURE SELF:
+                - Create reaction listener, look on google, nice examples
+                 - Filter reactions by only users in queue
+                 - Add timer for 2 mins to count reactions
+                 - Prevent user from voting for more than one reaction
+                - Then create game with balancer selected
+                """
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
