@@ -3,6 +3,7 @@
 import discord
 from discord import client
 from discord.ext import commands
+from discord.ext.commands import Cog
 
 from models.game_handler import GameHandler
 
@@ -23,7 +24,7 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
-        print(ctx.message.channel.name)  # this works btw
+        # print(ctx.message.channel.name)  # this works btw
 
         added = self.game_handler.add_user(ctx.author)
 
@@ -65,7 +66,7 @@ class Queue(commands.Cog):
 
                 embed.add_field(
                     name='Vote for Balancing Method!!',
-                    value=f'🇧 for Balanced Teams\n🇨 for Captains\n🇷 for Random Teams',
+                    value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
                     inline=False
                 )
 
@@ -74,14 +75,39 @@ class Queue(commands.Cog):
                 await message.add_reaction("🇨")
                 await message.add_reaction("🇷")
 
+                temp = []
+                for user in users_in_queue:
+                    temp.append(user)
+
+                balanced = 0
+                captains = 0
+                random = 0
+
                 """
-                MESSAGE TO FUTURE SELF:
-                - Create reaction listener, look on google, nice examples
-                 - Filter reactions by only users in queue
-                 - Add timer for 2 mins to count reactions
-                 - Prevent user from voting for more than one reaction
-                - Then create game with balancer selected
+                TODO: 
+                - Make voting last for 2 mins
+                - Maybe make the voting part of the queue a different async function?
+                    - This way it wouldn't affect another queue from popping? idk
+                    - Then the queue function would only handle users in the queue and once there is enough
+                    pass them to a different function, removing them from the queue and that function sorts
+                    the voting and team balancing out? idk have a think about this, i'm too tired atm :/
+                - Do balance team methods
                 """
+
+                while len(temp) > 0:
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda reaction, user: user in users_in_queue)
+
+                    # if user in temp:
+                    #     temp.remove(user)
+
+                    if reaction.emoji == "🇧":
+                        balanced += 1
+
+                    if reaction.emoji == "🇨":
+                        captains += 1
+
+                    if reaction.emoji == "🇷":
+                        random += 1
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
