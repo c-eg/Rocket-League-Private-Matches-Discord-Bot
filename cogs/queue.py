@@ -7,6 +7,9 @@ from discord.ext.commands import Cog
 
 from models.game_handler import GameHandler
 
+import time
+import asyncio
+
 embed_template = discord.Embed(
     title='Private Matches',
     colour=discord.Colour.dark_red()
@@ -55,59 +58,65 @@ class Queue(commands.Cog):
             # if self.game_handler.check_queue() is True:
             if len(users_in_queue) == 1:  # testing
                 # game = self.game_handler.create_game()
+                loop = asyncio.get_event_loop()
+                loop.create_task(self.create_game(ctx, users_in_queue))
 
-                embed = embed_template.copy()
+    async def create_game(self, ctx, users_in_queue):
+        embed = embed_template.copy()
 
-                embed.add_field(
-                    name='Game Created!',
-                    value=', '.join(user.mention for user in users_in_queue),
-                    inline=False
-                )
+        embed.add_field(
+            name='Game Created!',
+            value=', '.join(user.mention for user in users_in_queue),
+            inline=False
+        )
 
-                embed.add_field(
-                    name='Vote for Balancing Method!!',
-                    value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
-                    inline=False
-                )
+        embed.add_field(
+            name='Vote for Balancing Method!!',
+            value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
+            inline=False
+        )
 
-                message = await ctx.channel.send(embed=embed)
-                await message.add_reaction("🇧")
-                await message.add_reaction("🇨")
-                await message.add_reaction("🇷")
+        message = await ctx.channel.send(embed=embed)
+        await message.add_reaction("🇧")
+        await message.add_reaction("🇨")
+        await message.add_reaction("🇷")
 
-                temp = []
-                for user in users_in_queue:
-                    temp.append(user)
+        temp = []
+        for user in users_in_queue:
+            temp.append(user)
 
-                balanced = 0
-                captains = 0
-                random = 0
+        balanced = 0
+        captains = 0
+        random = 0
 
-                """
-                TODO: 
-                - Make voting last for 2 mins
-                - Maybe make the voting part of the queue a different async function?
-                    - This way it wouldn't affect another queue from popping? idk
-                    - Then the queue function would only handle users in the queue and once there is enough
-                    pass them to a different function, removing them from the queue and that function sorts
-                    the voting and team balancing out? idk have a think about this, i'm too tired atm :/
-                - Do balance team methods
-                """
+        time_start = time.time() + 20  # should be 120 (2 mins)
+        listen_for_reaction = True
 
-                while len(temp) > 0:
-                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda reaction, user: user in users_in_queue)
+        while len(temp) > 0 and listen_for_reaction:
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=time_start - time.time(), check=lambda reaction, user: user in users_in_queue)
 
-                    # if user in temp:
-                    #     temp.remove(user)
+                if reaction.emoji == "🇧":
+                    balanced += 1
+                elif reaction.emoji == "🇨":
+                    captains += 1
+                elif reaction.emoji == "🇷":
+                    random += 1
 
-                    if reaction.emoji == "🇧":
-                        balanced += 1
+                print(f'user: {user}, reaction: {reaction}')
 
-                    if reaction.emoji == "🇨":
-                        captains += 1
+                # if user in temp:
+                #     temp.remove(user)
+            except asyncio.TimeoutError:
+                listen_for_reaction = False
 
-                    if reaction.emoji == "🇷":
-                        random += 1
+        print('\ntime ran out\n')
+
+        """
+        TODO:
+        - Maybe change users_in_queue to a GameHandler object?
+            - because users_in_queue is passed as a reference, not value
+        """
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
