@@ -62,6 +62,11 @@ class Queue(commands.Cog):
                 loop.create_task(self.create_game(ctx, users_in_queue))
 
     async def create_game(self, ctx, users_in_queue):
+        """
+        TODO:
+        - Maybe change users_in_queue to a GameHandler object?
+            - because users_in_queue is passed as a reference, not value
+        """
         embed = embed_template.copy()
 
         embed.add_field(
@@ -111,12 +116,6 @@ class Queue(commands.Cog):
                 listen_for_reaction = False
 
         print('\ntime ran out\n')
-
-        """
-        TODO:
-        - Maybe change users_in_queue to a GameHandler object?
-            - because users_in_queue is passed as a reference, not value
-        """
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
