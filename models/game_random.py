@@ -9,6 +9,6 @@ class RandomGame(Game):
         super(RandomGame, self).__init__(players)
 
     def assign_teams(self):
-        random.shuffle(self.__users)
-        self.__team_one = self.__users[:3]
-        self.__team_two = self.__users[-3:]
+        random.shuffle(self.users)
+        self.team_one = self.users[:3]
+        self.team_two = self.users[-3:]

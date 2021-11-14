@@ -61,14 +61,14 @@ class Queue(commands.Cog):
             )
             embed.add_field(
                 name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(user.mention for user in self.users_in_queue),
+                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
                 inline=False
             )
 
         await ctx.channel.send(embed=embed)
 
         # if len(self.users_in_queue) == 6:
-        if len(self.users_in_queue) == 1:  # testing
+        if len(self.users_in_queue) == 2:  # testing
             game_users = []
 
             # for i in range(6):
@@ -87,16 +87,11 @@ class Queue(commands.Cog):
         embed = embed_template.copy()
         users = game_handler.get_users()
 
-        print("\n")
-        print(users)
-        print("\n")
-
         embed.add_field(
-            name='Game Created!',
+            name='Users to Vote!',
             value=', '.join(user.get_discord_user().mention for user in users),
             inline=False
         )
-
         embed.add_field(
             name='Vote for Balancing Method!!',
             value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
@@ -108,7 +103,7 @@ class Queue(commands.Cog):
         await message.add_reaction("🇨")
         await message.add_reaction("🇷")
 
-        temp = [user for user in users]
+        temp = [user.get_discord_user() for user in users]
 
         balanced = 0
         captains = 0
@@ -143,19 +138,18 @@ class Queue(commands.Cog):
         else:
             game = RandomGame(users)
 
-        await game.assign_teams()
+        game.assign_teams()
 
         embed = embed_template.copy()
 
         embed.add_field(
             name='Team 1',
-            value=', '.join(user.mention for user in game.get_team_one),
+            value=', '.join(user.get_discord_user().mention for user in game.get_team_one()),
             inline=False
         )
-
         embed.add_field(
             name='Team 2',
-            value=', '.join(user.mention for user in game.get_team_two),
+            value=', '.join(user.get_discord_user().mention for user in game.get_team_two()),
             inline=False
         )
 
@@ -165,31 +159,32 @@ class Queue(commands.Cog):
     async def leave(self, ctx: commands.Context):
         message = embed_template.copy()
 
-        if ctx.author in self.users_in_queue:
-            self.users_in_queue.remove(ctx.author)
+        if not self.users_in_queue.get(ctx.author.id, False):
+            await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
+            return
 
+        del self.users_in_queue[ctx.author.id]
+
+        message.add_field(
+            name='User Left the Queue!',
+            value=f'{ctx.author.mention} left the queue.',
+            inline=False
+        )
+
+        if len(self.users_in_queue) > 0:
             message.add_field(
-                name='User Left the Queue!',
-                value=f'{ctx.author.mention} left the queue.',
+                name=f'Users in Queue: {str(len(self.users_in_queue))}',
+                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
+                inline=False
+            )
+        else:
+            message.add_field(
+                name=f'Queue Empty!',
+                value='To restart the queue, type `;q` or `;queue`',
                 inline=False
             )
 
-            if len(self.users_in_queue) > 0:
-                message.add_field(
-                    name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                    value=', '.join(user.mention for user in self.users_in_queue),
-                    inline=False
-                )
-            else:
-                message.add_field(
-                    name=f'Queue Empty!',
-                    value='To restart the queue, type `;q` or `;queue`',
-                    inline=False
-                )
-
-            await ctx.channel.send(embed=message)
-        else:
-            await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
+        await ctx.channel.send(embed=message)
 
 
 def setup(bot):
