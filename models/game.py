@@ -2,9 +2,6 @@
 
 from abc import ABC, abstractmethod
 
-# TODO: make this abstract class to then create a 'Captains',
-# 'Balanced' or 'Random' subclass games
-
 
 class Game(ABC):
     def __init__(self, players: list):
