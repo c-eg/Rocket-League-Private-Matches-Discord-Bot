@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import abc
+from abc import ABC, abstractmethod
 
 # TODO: make this abstract class to then create a 'Captains',
 # 'Balanced' or 'Random' subclass games
 
 
-class Game:
-    __metaclass__ = abc.ABCMeta
-
+class Game(ABC):
     def __init__(self, players: list):
         self.__team_one = []
         self.__team_two = []
-        players.sort(key=lambda x: x.__mmr, reverse=False)
         self.__users = players
+        self.__users.sort(key=lambda x: x.__mmr, reverse=False)
 
-    @abc.abstractmethod
+    @abstractmethod
     def assign_teams(self):
-        return
+        pass
 
     def get_team_one(self):
         return self.__team_one

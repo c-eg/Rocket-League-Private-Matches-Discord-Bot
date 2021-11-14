@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
 
+from discord import Member
+
+
 class Player:
-    def __init__(self, discord_id, mmr):
-        self.__id = discord_id
-        self.__mmr = mmr
+    def __init__(self, discord_user: Member, mmr: int):
+        self.user = discord_user
+        self.mmr = mmr
 
-    def get_id(self):
-        return self.__id
+    def get_discord_user(self) -> int:
+        return self.user
 
-    def get_mmr(self):
-        return self.__mmr
+    def get_mmr(self) -> int:
+        return self.mmr
 
-    def set_mmr(self, mmr):
-        self.__mmr = mmr
+    def __str__(self) -> str:
+        return f"{self.user}: {self.mmr}"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Player):
             return NotImplemented
 
-        return self.__id == other.__id
+        return self.user == other.user
