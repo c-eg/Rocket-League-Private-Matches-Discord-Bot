@@ -7,11 +7,11 @@ class Game(ABC):
     def __init__(self, players: list):
         self.team_one = []
         self.team_two = []
-        self.users = players
-        self.users.sort(key=lambda x: x.mmr, reverse=False)
+        self.players = players
+        self.players.sort(key=lambda x: x.mmr, reverse=False)
 
     @abstractmethod
-    def assign_teams(self):
+    async def assign_teams(self):
         pass
 
     def get_team_one(self):

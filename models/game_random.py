@@ -8,7 +8,7 @@ class RandomGame(Game):
     def __init__(self, players):
         super(RandomGame, self).__init__(players)
 
-    def assign_teams(self):
-        random.shuffle(self.users)
-        self.team_one = self.users[:3]
-        self.team_two = self.users[-3:]
+    async def assign_teams(self):
+        random.shuffle(self.players)
+        self.team_one = self.players[:3]
+        self.team_two = self.players[-3:]

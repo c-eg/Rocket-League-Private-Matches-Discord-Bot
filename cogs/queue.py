@@ -61,21 +61,21 @@ class Queue(commands.Cog):
             )
             embed.add_field(
                 name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
+                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
                 inline=False
             )
 
         await ctx.channel.send(embed=embed)
 
         # if len(self.users_in_queue) == 6:
-        if len(self.users_in_queue) == 2:  # testing
-            game_users = []
+        if len(self.users_in_queue) == 1:  # testing
+            game_players = []
 
             # for i in range(6):
             for i in range(1):  # testing
-                game_users.append(self.users_in_queue.popitem(last=False)[1])
+                game_players.append(self.users_in_queue.popitem(last=False)[1])
 
-            game_handler = GameHandler(6, game_users)
+            game_handler = GameHandler(6, game_players)
 
             loop = asyncio.get_event_loop()
             loop.create_task(self.create_game(ctx, game_handler))
@@ -85,11 +85,11 @@ class Queue(commands.Cog):
         Creates a game for the users who are in the queue.
         """
         embed = embed_template.copy()
-        users = game_handler.get_users()
+        players = game_handler.get_players()
 
         embed.add_field(
             name='Users to Vote!',
-            value=', '.join(user.get_discord_user().mention for user in users),
+            value=', '.join(player.get_discord_user().mention for player in players),
             inline=False
         )
         embed.add_field(
@@ -103,7 +103,7 @@ class Queue(commands.Cog):
         await message.add_reaction("🇨")
         await message.add_reaction("🇷")
 
-        temp = [user.get_discord_user() for user in users]
+        users_voting = [player.get_discord_user() for player in players]
 
         balanced = 0
         captains = 0
@@ -113,9 +113,9 @@ class Queue(commands.Cog):
         listen_for_reaction = True
 
         def check(reaction, user):
-            return user in users and message == reaction.message
+            return user in users_voting and message == reaction.message
 
-        while len(temp) > 0 and listen_for_reaction:
+        while len(users_voting) > 0 and listen_for_reaction:
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', timeout=time_start - time.time(), check=check)
 
@@ -126,34 +126,34 @@ class Queue(commands.Cog):
                 elif reaction.emoji == "🇷":
                     random += 1
 
-                # if user in temp:
-                #     temp.remove(user)
+                # if user in users_voting:
+                #     users_voting.remove(user)
             except asyncio.TimeoutError:
                 listen_for_reaction = False
 
         if balanced > captains and balanced > random:
-            game = BalancedGame(users)
+            game = BalancedGame(players)
         elif captains > balanced and captains > random:
-            game = CaptainsGame(users)
+            game = CaptainsGame(players, ctx, self.bot)
         else:
-            game = RandomGame(users)
+            game = RandomGame(players)
 
-        game.assign_teams()
+        await game.assign_teams()
 
-        embed = embed_template.copy()
+        # embed = embed_template.copy()
 
-        embed.add_field(
-            name='Team 1',
-            value=', '.join(user.get_discord_user().mention for user in game.get_team_one()),
-            inline=False
-        )
-        embed.add_field(
-            name='Team 2',
-            value=', '.join(user.get_discord_user().mention for user in game.get_team_two()),
-            inline=False
-        )
+        # embed.add_field(
+        #     name='Team 1',
+        #     value=', '.join(player.get_discord_user().mention for player in game.get_team_one()),
+        #     inline=False
+        # )
+        # embed.add_field(
+        #     name='Team 2',
+        #     value=', '.join(player.get_discord_user().mention for player in game.get_team_two()),
+        #     inline=False
+        # )
 
-        await ctx.channel.send(embed=embed)
+        # await ctx.channel.send(embed=embed)
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
@@ -174,7 +174,7 @@ class Queue(commands.Cog):
         if len(self.users_in_queue) > 0:
             message.add_field(
                 name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
+                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
                 inline=False
             )
         else:
