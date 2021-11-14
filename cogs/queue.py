@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
 
 import discord
-from discord import client
 from discord.ext import commands
-from discord.ext.commands import Cog
 
-from models.game_handler import GameHandler
-
+from collections import OrderedDict
 import time
 import asyncio
+
+from models.player import Player
+from models.game_handler import GameHandler
+from models.game_balanced import BalancedGame
+from models.game_captains import CaptainsGame
+from models.game_random import RandomGame
+from db.database import record
 
 embed_template = discord.Embed(
     title='Private Matches',
     colour=discord.Colour.dark_red()
 )
 embed_template.set_footer(
-    text='Bot created by curpha',
+    text='UEA Private Matches by curpha',
     icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
 )
 
@@ -23,20 +27,27 @@ embed_template.set_footer(
 class Queue(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.users_in_queue = []
+        self.users_in_queue = OrderedDict()
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
         # print(ctx.message.channel.name)  # this works btw
 
-        if ctx.author in self.users_in_queue:
+        if self.users_in_queue.get(ctx.author.id, False):
             await ctx.channel.send(f'You are already in the queue, {ctx.author.mention}.')
             return
 
-        self.users_in_queue.append(ctx.author)
+        res = record("SELECT * FROM player WHERE discord_id = ?", ctx.author.id)
+
+        if res is None:
+            await ctx.channel.send(f'You have not set your mmr, please use: `;setmmr amount`!')
+            return
+
+        self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
+
         embed = embed_template.copy()
 
-        if self.users_in_queue == 1:
+        if len(self.users_in_queue) == 1:
             embed.add_field(
                 name='Queue Started!',
                 value=f'{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!',
@@ -50,35 +61,37 @@ class Queue(commands.Cog):
             )
             embed.add_field(
                 name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(user.mention for user in self.users_in_queue),
+                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
                 inline=False
             )
 
         await ctx.channel.send(embed=embed)
 
         # if len(self.users_in_queue) == 6:
-        if len(self.users_in_queue) == 1:  # testing
-            game_handler = GameHandler(6, self.users_in_queue)
-            self.users_in_queue = self.users_in_queue[6:]  # remove users in queue
+        if len(self.users_in_queue) == 2:  # testing
+            game_users = []
+
+            # for i in range(6):
+            for i in range(1):  # testing
+                game_users.append(self.users_in_queue.popitem(last=False)[1])
+
+            game_handler = GameHandler(6, game_users)
 
             loop = asyncio.get_event_loop()
             loop.create_task(self.create_game(ctx, game_handler))
 
     async def create_game(self, ctx, game_handler):
         """
-        TODO:
-        - Check to make sure the reaction listener only checks
-        the message the bot sent, and no other messages
+        Creates a game for the users who are in the queue.
         """
         embed = embed_template.copy()
         users = game_handler.get_users()
 
         embed.add_field(
-            name='Game Created!',
-            value=', '.join(user.mention for user in users),
+            name='Users to Vote!',
+            value=', '.join(user.get_discord_user().mention for user in users),
             inline=False
         )
-
         embed.add_field(
             name='Vote for Balancing Method!!',
             value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
@@ -90,18 +103,21 @@ class Queue(commands.Cog):
         await message.add_reaction("🇨")
         await message.add_reaction("🇷")
 
-        temp = [user for user in users]
+        temp = [user.get_discord_user() for user in users]
 
         balanced = 0
         captains = 0
         random = 0
 
-        time_start = time.time() + 20  # should be 120 (2 mins)
+        time_start = time.time() + 10  # should be 120 (2 mins)
         listen_for_reaction = True
+
+        def check(reaction, user):
+            return user in users and message == reaction.message
 
         while len(temp) > 0 and listen_for_reaction:
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=time_start - time.time(), check=lambda reaction, user: user in users)
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=time_start - time.time(), check=check)
 
                 if reaction.emoji == "🇧":
                     balanced += 1
@@ -110,44 +126,65 @@ class Queue(commands.Cog):
                 elif reaction.emoji == "🇷":
                     random += 1
 
-                print(f'user: {user}, reaction: {reaction}')
-
                 # if user in temp:
                 #     temp.remove(user)
             except asyncio.TimeoutError:
                 listen_for_reaction = False
 
-        print('\ntime ran out\n')
+        if balanced > captains and balanced > random:
+            game = BalancedGame(users)
+        elif captains > balanced and captains > random:
+            game = CaptainsGame(users)
+        else:
+            game = RandomGame(users)
+
+        game.assign_teams()
+
+        embed = embed_template.copy()
+
+        embed.add_field(
+            name='Team 1',
+            value=', '.join(user.get_discord_user().mention for user in game.get_team_one()),
+            inline=False
+        )
+        embed.add_field(
+            name='Team 2',
+            value=', '.join(user.get_discord_user().mention for user in game.get_team_two()),
+            inline=False
+        )
+
+        await ctx.channel.send(embed=embed)
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
         message = embed_template.copy()
 
-        if ctx.author in self.users_in_queue:
-            self.users_in_queue.remove(ctx.author)
+        if not self.users_in_queue.get(ctx.author.id, False):
+            await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
+            return
 
+        del self.users_in_queue[ctx.author.id]
+
+        message.add_field(
+            name='User Left the Queue!',
+            value=f'{ctx.author.mention} left the queue.',
+            inline=False
+        )
+
+        if len(self.users_in_queue) > 0:
             message.add_field(
-                name='User Left the Queue!',
-                value=f'{ctx.author.mention} left the queue.',
+                name=f'Users in Queue: {str(len(self.users_in_queue))}',
+                value=', '.join(user.get_discord_user().mention for user in self.users_in_queue.values()),
+                inline=False
+            )
+        else:
+            message.add_field(
+                name=f'Queue Empty!',
+                value='To restart the queue, type `;q` or `;queue`',
                 inline=False
             )
 
-            if len(self.users_in_queue) > 0:
-                message.add_field(
-                    name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                    value=', '.join(user.mention for user in self.users_in_queue),
-                    inline=False
-                )
-            else:
-                message.add_field(
-                    name=f'Queue Empty!',
-                    value='To restart the queue, type `;q` or `;queue`',
-                    inline=False
-                )
-
-            await ctx.channel.send(embed=message)
-        else:
-            await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
+        await ctx.channel.send(embed=message)
 
 
 def setup(bot):

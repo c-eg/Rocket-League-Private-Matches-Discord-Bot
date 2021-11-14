@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC
-
 from models.game import Game
 
 
-class BalancedGame(Game, ABC):
+class CaptainsGame(Game):
     def __init__(self, players):
-        super().__init__(players)
+        super(CaptainsGame, self).__init__(self, players)
 
     def assign_teams(self):
         return

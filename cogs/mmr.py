@@ -4,13 +4,13 @@ from discord.ext import commands
 
 from db import database
 
-queue_message = discord.Embed(
-    title='Private Matches',
+embed_template = discord.Embed(
+    title='UEA Private Matches',
     colour=discord.Colour.dark_red()
 )
-queue_message.set_footer(
-    text='Rocket League Private Matches Discord Bot',
-    icon_url='https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/59/595a3684e667dc05e9d0d7e76efa8bb33b43a45f_full.jpg'
+embed_template.set_footer(
+    text='UEA Private Matches by curpha',
+    icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
 )
 
 
@@ -19,46 +19,29 @@ class MatchMakingRating(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def mmr(self, ctx: commands.Context, user=None):
-        """
-        Command to check a users match making rating
-        :param ctx: Commands context
-        :param user: user to check
-        :return: void
-        """
-        user_to_check = ctx.author
-
-        if user is not None:
-            user_to_check = await self.bot.fetch_user(user[3:-1])
-
-        message = queue_message.copy()
+    async def mmr(self, ctx: commands.Context):
+        embed = embed_template.copy()
 
         sql = 'SELECT mmr FROM player WHERE discord_id = ?'
-        result = database.field(sql, user_to_check.id)
+        result = database.field(sql, ctx.author.id)
 
         if result is None:
-            message.add_field(
+            embed.add_field(
                 name='Match Making Rating!',
-                value=user_to_check.mention + ' has not set their MMR! Type `;setmmr <amount>` to set it.',
+                value=ctx.author.mention + ' has not set their MMR! Type `;setmmr <amount>` to set it.',
                 inline=False
             )
         else:
-            message.add_field(
+            embed.add_field(
                 name='Match Making Rating!',
-                value=user_to_check.mention + ': ' + str(result),
+                value=ctx.author.mention + ': ' + str(result),
                 inline=False
             )
 
-        await ctx.channel.send(embed=message)
+        await ctx.channel.send(embed=embed)
 
     @commands.command()
     async def setmmr(self, ctx: commands.Context, mmr: int):
-        """
-        Command to set the current users match making rating
-        :param ctx: Command context
-        :param mmr: match making rating
-        :return: void
-        """
         sql = 'SELECT * FROM player WHERE discord_id = ?'
         user = database.record(sql, ctx.author.id)
 
@@ -70,6 +53,16 @@ class MatchMakingRating(commands.Cog):
         else:
             sql = 'UPDATE player SET mmr = ? WHERE discord_id = ?'
             database.execute(sql, mmr, ctx.author.id)
+
+        embed = embed_template.copy()
+
+        embed.add_field(
+            name='Match Making Rating!',
+            value=f"{ctx.author.mention} set their mmr to: {str(mmr)}",
+            inline=False
+        )
+
+        await ctx.channel.send(embed=embed)
 
 
 def setup(bot):
