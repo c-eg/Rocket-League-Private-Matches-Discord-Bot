@@ -140,20 +140,20 @@ class Queue(commands.Cog):
 
         await game.assign_teams()
 
-        # embed = embed_template.copy()
+        embed = embed_template.copy()
 
-        # embed.add_field(
-        #     name='Team 1',
-        #     value=', '.join(player.get_discord_user().mention for player in game.get_team_one()),
-        #     inline=False
-        # )
-        # embed.add_field(
-        #     name='Team 2',
-        #     value=', '.join(player.get_discord_user().mention for player in game.get_team_two()),
-        #     inline=False
-        # )
+        embed.add_field(
+            name='Team 1',
+            value=', '.join(player.get_discord_user().mention for player in game.get_team_one()),
+            inline=False
+        )
+        embed.add_field(
+            name='Team 2',
+            value=', '.join(player.get_discord_user().mention for player in game.get_team_two()),
+            inline=False
+        )
 
-        # await ctx.channel.send(embed=embed)
+        await ctx.channel.send(embed=embed)
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):

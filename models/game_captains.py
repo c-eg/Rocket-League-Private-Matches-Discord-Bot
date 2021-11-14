@@ -45,7 +45,7 @@ class CaptainsGame(Game):
         - Then assign last player to team 1
         """
 
-        if not 1 <= reply <= len(self.players):
+        # if not 1 <= reply <= len(self.players):
 
 
-        print(reply.content)
+        # print(reply.content)
