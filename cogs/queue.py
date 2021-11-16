@@ -6,6 +6,7 @@ from discord.ext import commands
 from collections import OrderedDict
 import time
 import asyncio
+from models.no_player_action_exception import NoPlayerActionException
 
 from models.player import Player
 from models.game_handler import GameHandler
@@ -134,7 +135,11 @@ class Queue(commands.Cog):
         else:
             game = RandomGame(players)
 
-        await game.assign_teams()
+        try:
+            await game.assign_teams()
+        except NoPlayerActionException:
+            await ctx.channel.send("A user did not complete their task in enough time. Game is cancelled.")
+            return
 
         embed = embed_template.copy()
 
