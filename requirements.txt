@@ -6,6 +6,6 @@ discord.py==1.7.3
 idna==3.3
 multidict==5.2.0
 python-dotenv==0.19.2
-typing-extensions==3.10.0.2
+typing-extensions==4.0.0
 APScheduler~=3.8.1
 yarl==1.7.2
