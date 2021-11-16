@@ -32,7 +32,7 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
-        if not ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != '6-mans-test-things':
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
@@ -161,7 +161,7 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
-        if not ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != '6-mans-test-things':
             return
 
         embed = embed_template.copy()
@@ -196,7 +196,7 @@ class Queue(commands.Cog):
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
-        if not ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != '6-mans-test-things':
             return
 
         self.users_in_queue.clear()
