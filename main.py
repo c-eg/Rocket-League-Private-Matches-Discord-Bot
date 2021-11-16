@@ -18,6 +18,7 @@ COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
 
 @bot.event
 async def on_ready():
+    # start scheduler to auto save db
     scheduler = AsyncIOScheduler()
     database.auto_save(scheduler)
     scheduler.start()
