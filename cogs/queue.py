@@ -31,8 +31,6 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
-        # print(ctx.message.channel.name)  # this works btw
-
         if self.users_in_queue.get(ctx.author.id, False):
             await ctx.channel.send(f'You are already in the queue, {ctx.author.mention}.')
             return
@@ -67,12 +65,10 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-        # if len(self.users_in_queue) == 6:
-        if len(self.users_in_queue) == 1:  # testing
+        if len(self.users_in_queue) == 6:
             game_players = []
 
-            # for i in range(6):
-            for i in range(1):  # testing
+            for i in range(6):
                 game_players.append(self.users_in_queue.popitem(last=False)[1])
 
             game_handler = GameHandler(6, game_players)
@@ -109,7 +105,7 @@ class Queue(commands.Cog):
         captains = 0
         random = 0
 
-        time_start = time.time() + 10  # should be 120 (2 mins)
+        time_start = time.time() + 120
         listen_for_reaction = True
 
         def check(reaction, user):

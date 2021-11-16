@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+
 import discord
 from discord.ext import commands
 
 from db import database
 
 embed_template = discord.Embed(
-    title='UEA Private Matches',
+    title='Private Matches',
     colour=discord.Colour.dark_red()
 )
 embed_template.set_footer(
