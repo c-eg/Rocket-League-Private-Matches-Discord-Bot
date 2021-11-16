@@ -16,7 +16,7 @@ from db.database import record
 
 embed_template = discord.Embed(
     title='Private Matches',
-    colour=discord.Colour.dark_red()
+    colour=discord.Colour.teal()
 )
 embed_template.set_footer(
     text='UEA Private Matches by curpha',
@@ -38,7 +38,7 @@ class Queue(commands.Cog):
         res = record("SELECT * FROM player WHERE discord_id = ?", ctx.author.id)
 
         if res is None:
-            await ctx.channel.send(f'You have not set your mmr, please use: `;setmmr amount`!')
+            await ctx.channel.send(f'You have not set your mmr, please use: `;setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/')
             return
 
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])

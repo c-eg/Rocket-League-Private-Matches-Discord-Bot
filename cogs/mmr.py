@@ -7,7 +7,7 @@ from db import database
 
 embed_template = discord.Embed(
     title='Private Matches',
-    colour=discord.Colour.dark_red()
+    colour=discord.Colour.teal()
 )
 embed_template.set_footer(
     text='UEA Private Matches by curpha',
@@ -26,20 +26,22 @@ class MatchMakingRating(commands.Cog):
         sql = 'SELECT mmr FROM player WHERE discord_id = ?'
 
         if user:
-            result = database.field(sql, user.id)
+            user_to_check = user
         else:
-            result = database.field(sql, ctx.author.id)
+            user_to_check = ctx.author
+
+        result = database.field(sql, user_to_check.id)
 
         if result is None:
             embed.add_field(
                 name='Match Making Rating!',
-                value=ctx.author.mention + ' has not set their MMR! Type `;setmmr <amount>` to set it.',
+                value=user_to_check.mention + ' has not set their MMR! Type `;setpeak <amount>` to set it.',
                 inline=False
             )
         else:
             embed.add_field(
                 name='Match Making Rating!',
-                value=ctx.author.mention + ': ' + str(result),
+                value=user_to_check.mention + ': ' + str(result),
                 inline=False
             )
 
@@ -47,6 +49,10 @@ class MatchMakingRating(commands.Cog):
 
     @commands.command()
     async def setpeak(self, ctx: commands.Context, mmr: int):
+        if not 1 <= mmr <= 3000:
+            await ctx.channel.send("Please enter a valid mmr!")
+            return
+
         sql = 'SELECT * FROM player WHERE discord_id = ?'
         user = database.record(sql, ctx.author.id)
 
