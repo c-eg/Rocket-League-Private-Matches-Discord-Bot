@@ -19,11 +19,15 @@ class MatchMakingRating(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def mmr(self, ctx: commands.Context):
+    async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
         embed = embed_template.copy()
 
         sql = 'SELECT mmr FROM player WHERE discord_id = ?'
-        result = database.field(sql, ctx.author.id)
+
+        if user:
+            result = database.field(sql, user.id)
+        else:
+            result = database.field(sql, ctx.author.id)
 
         if result is None:
             embed.add_field(
@@ -41,7 +45,7 @@ class MatchMakingRating(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @commands.command()
-    async def setmmr(self, ctx: commands.Context, mmr: int):
+    async def setpeak(self, ctx: commands.Context, mmr: int):
         sql = 'SELECT * FROM player WHERE discord_id = ?'
         user = database.record(sql, ctx.author.id)
 
