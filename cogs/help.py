@@ -13,7 +13,7 @@ embed_template.set_footer(
 )
 
 
-class MatchMakingRating(commands.Cog):
+class Help(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -38,3 +38,7 @@ class MatchMakingRating(commands.Cog):
         )
 
         await ctx.channel.send(embed=embed)
+
+
+def setup(bot):
+    bot.add_cog(Help(bot))
