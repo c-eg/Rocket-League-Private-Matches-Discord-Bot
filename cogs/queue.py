@@ -32,6 +32,9 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx: commands.Context):
+        if not ctx.channel.name != '6-mans-test-things':
+            return
+
         if self.users_in_queue.get(ctx.author.id, False):
             await ctx.channel.send(f'You are already in the queue, {ctx.author.mention}.')
             return
@@ -158,6 +161,9 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
+        if not ctx.channel.name != '6-mans-test-things':
+            return
+
         embed = embed_template.copy()
 
         if not self.users_in_queue.get(ctx.author.id, False):
@@ -190,6 +196,9 @@ class Queue(commands.Cog):
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
+        if not ctx.channel.name != '6-mans-test-things':
+            return
+
         self.users_in_queue.clear()
 
         embed = embed_template.copy()
