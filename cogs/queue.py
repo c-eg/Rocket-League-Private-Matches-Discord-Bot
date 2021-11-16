@@ -122,8 +122,8 @@ class Queue(commands.Cog):
                 elif reaction.emoji == "🇷":
                     random += 1
 
-                # if user in users_voting:
-                #     users_voting.remove(user)
+                if user in users_voting:
+                    users_voting.remove(user)
             except asyncio.TimeoutError:
                 listen_for_reaction = False
 
