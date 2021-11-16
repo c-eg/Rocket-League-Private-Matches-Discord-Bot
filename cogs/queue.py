@@ -157,7 +157,7 @@ class Queue(commands.Cog):
 
     @commands.command(aliases=['l'])
     async def leave(self, ctx: commands.Context):
-        message = embed_template.copy()
+        embed = embed_template.copy()
 
         if not self.users_in_queue.get(ctx.author.id, False):
             await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
@@ -165,26 +165,41 @@ class Queue(commands.Cog):
 
         del self.users_in_queue[ctx.author.id]
 
-        message.add_field(
+        embed.add_field(
             name='User Left the Queue!',
             value=f'{ctx.author.mention} left the queue.',
             inline=False
         )
 
         if len(self.users_in_queue) > 0:
-            message.add_field(
+            embed.add_field(
                 name=f'Users in Queue: {str(len(self.users_in_queue))}',
                 value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
                 inline=False
             )
         else:
-            message.add_field(
+            embed.add_field(
                 name=f'Queue Empty!',
                 value='To restart the queue, type `;q` or `;queue`',
                 inline=False
             )
 
-        await ctx.channel.send(embed=message)
+        await ctx.channel.send(embed=embed)
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def clear(self, ctx: commands.Context):
+        self.users_in_queue.clear()
+
+        embed = embed_template.copy()
+
+        embed.add_field(
+            name='The queue has been cleared!',
+            value='Please type `;q` or `;queue` to restart the queue.',
+            inline=False
+        )
+
+        await ctx.channel.send(embed=embed)
 
 
 def setup(bot):
