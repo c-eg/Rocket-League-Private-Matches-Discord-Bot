@@ -48,7 +48,7 @@ class CaptainsGame(Game):
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
 
-        self.team_one.push(self.players.pop(reply - 1))
+        self.team_one.append(self.players.pop(reply - 1))
 
         # CAPTAIN B FIRST PICK
         captain_b_message = "You have 2 minutes to pick.\nPlease pick a player to be on your team, type the number corresponding to the player e.g. 2\n\n"
@@ -77,7 +77,7 @@ class CaptainsGame(Game):
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
 
-        self.team_two.push(self.players.pop(reply - 1))
+        self.team_two.append(self.players.pop(reply - 1))
 
         # CAPTAIN B SECOND PICK
         captain_b_message = "Please pick another player to be on your team, type the number corresponding to the player e.g. 2\n\n"
@@ -105,10 +105,10 @@ class CaptainsGame(Game):
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
 
-        self.team_two.push(self.players.pop(reply - 1))
+        self.team_two.append(self.players.pop(reply - 1))
 
         # ASSIGN CAPTAIN A (Team 1) LAST PLAYER
-        self.team_one.push(self.players.pop(0))
+        self.team_one.append(self.players.pop(0))
 
         # ASSIGN CAPTAIN A TO TEAM 1 AND CAPTAIN B TO TEAM 2
         self.team_one.insert(0, captain_a)

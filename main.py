@@ -24,6 +24,13 @@ async def on_ready():
     scheduler.start()
     print('Bot successfully started!')
 
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    raise error
+
 for cog in COGS:
     if cog != "__init__":
         bot.load_extension(f'cogs.{cog}')

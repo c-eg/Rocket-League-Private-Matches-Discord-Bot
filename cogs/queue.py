@@ -211,6 +211,13 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
+    @clear.error
+    async def clear_error(self, error, ctx):
+        if isinstance(error, error.MissingPermissions):
+            await ctx.send("You do not have permission to use `;clear`!")
+        else:
+            raise error
+
 
 def setup(bot):
     bot.add_cog(Queue(bot))
