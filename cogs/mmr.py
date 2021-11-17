@@ -21,7 +21,7 @@ class MatchMakingRating(commands.Cog):
 
     @commands.command()
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
-        if not ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != '6-mans-test-things':
             return
 
         embed = embed_template.copy()
@@ -51,9 +51,14 @@ class MatchMakingRating(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @commands.command()
-    async def setpeak(self, ctx: commands.Context, mmr: int):
-        if not ctx.channel.name != '6-mans-test-things':
+    async def setpeak(self, ctx: commands.Context, mmr):
+        if ctx.channel.name != '6-mans-test-things':
             return
+
+        try:
+            mmr = int(mmr)
+        except ValueError:
+            await ctx.channel.send("Please enter a valid mmr!")
 
         if not 1 <= mmr <= 3000:
             await ctx.channel.send("Please enter a valid mmr!")
