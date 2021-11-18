@@ -30,7 +30,11 @@ class Queue(commands.Cog):
         self.bot = bot
         self.users_in_queue = OrderedDict()
 
-    @commands.command(aliases=['q'])
+    @commands.command(
+        aliases=['q'],
+        help="Joins the private matches queue.",
+        brief="Joins the queue."
+    )
     async def queue(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':
             return
@@ -159,7 +163,11 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(aliases=['l'])
+    @commands.command(
+        aliases=['l'],
+        help="Leaves the private matches queue.",
+        brief="Leaves the queue."
+    )
     async def leave(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':
             return
@@ -193,7 +201,10 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command()
+    @commands.command(
+        help="Lists all the users in the private matches queue.",
+        brief="Lists users in the queue."
+    )
     async def list(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':
             return
@@ -215,7 +226,10 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command()
+    @commands.command(
+        help="Clears all users from the queue.",
+        brief="Clears the queue."
+    )
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':

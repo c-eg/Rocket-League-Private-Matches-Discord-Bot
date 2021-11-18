@@ -19,7 +19,11 @@ class MatchMakingRating(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(
+        aliases=['cp'],
+        help="Checks the peak mmr for yourself or the user you specifiy.",
+        brief="Checks a user's peak mmr."
+    )
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
         if ctx.channel.name != '6-mans-test-things':
             return
@@ -58,7 +62,11 @@ class MatchMakingRating(commands.Cog):
         else:
             raise error
 
-    @commands.command()
+    @commands.command(
+        aliases=['sp'],
+        help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
+        brief="Sets your peak mmr."
+    )
     async def setpeak(self, ctx: commands.Context, mmr):
         if ctx.channel.name != '6-mans-test-things':
             return
