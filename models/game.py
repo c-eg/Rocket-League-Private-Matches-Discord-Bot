@@ -8,7 +8,7 @@ class Game(ABC):
         self.team_one = []
         self.team_two = []
         self.players = players
-        self.players.sort(key=lambda x: x.mmr, reverse=False)
+        self.players.sort(key=lambda x: x.mmr, reverse=True)
 
     @abstractmethod
     async def assign_teams(self):

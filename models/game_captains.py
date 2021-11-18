@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import discord
 from discord.ext import commands
 from asyncio import TimeoutError
 import time
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
+
+
+embed_template = discord.Embed(
+    title='Captains will now pick teams!',
+    colour=discord.Colour.teal()
+)
+embed_template.set_footer(
+    text='UEA Private Matches by curpha',
+    icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
+)
 
 
 class CaptainsGame(Game):
@@ -20,6 +31,19 @@ class CaptainsGame(Game):
         """
         captain_a = self.players.pop(0)
         captain_b = self.players.pop(0)
+
+        embed = embed_template.copy()
+
+        embed.add_field(
+            name=f'Captain 1!',
+            value=f'{captain_a.get_discord_user().mention}',
+            inline=False
+        )
+        embed.add_field(
+            name=f'Captain 2!',
+            value=f'{captain_b.get_discord_user().mention}',
+            inline=False
+        )
 
         # CAPTAIN A FIRST PICK
         captain_a_message = "You have 90 seconds to pick.\nPlease pick a player to be on your team, type the number corresponding to the player e.g. 2\n\n"
@@ -42,13 +66,12 @@ class CaptainsGame(Game):
                 if 1 <= reply <= 4:
                     listen_for_captain_a = False
                     await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    self.team_one.append(self.players.pop(reply - 1))
                 else:
                     await captain_a.get_discord_user().send("Please enter a number between 1 and 4!")
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
-
-        self.team_one.append(self.players.pop(reply - 1))
 
         # CAPTAIN B FIRST PICK
         captain_b_message = "You have 2 minutes to pick.\nPlease pick a player to be on your team, type the number corresponding to the player e.g. 2\n\n"
@@ -71,13 +94,12 @@ class CaptainsGame(Game):
                 if 1 <= reply <= 3:
                     listen_for_captain_a = False
                     await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    self.team_two.append(self.players.pop(reply - 1))
                 else:
                     await captain_a.get_discord_user().send("Please enter a number between 1 and 3!")
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
-
-        self.team_two.append(self.players.pop(reply - 1))
 
         # CAPTAIN B SECOND PICK
         captain_b_message = "Please pick another player to be on your team, type the number corresponding to the player e.g. 2\n\n"
@@ -99,13 +121,12 @@ class CaptainsGame(Game):
                 if 1 <= reply <= 2:
                     listen_for_captain_a = False
                     await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    self.team_two.append(self.players.pop(reply - 1))
                 else:
                     await captain_a.get_discord_user().send("Please enter the number 1 or 2!")
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
-
-        self.team_two.append(self.players.pop(reply - 1))
 
         # ASSIGN CAPTAIN A (Team 1) LAST PLAYER
         self.team_one.append(self.players.pop(0))
