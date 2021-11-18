@@ -194,6 +194,28 @@ class Queue(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @commands.command()
+    async def list(self, ctx: commands.Context):
+        if ctx.channel.name != '6-mans-test-things':
+            return
+
+        embed = embed_template.copy()
+
+        if len(self.users_in_queue) > 0:
+            embed.add_field(
+                name=f'Users in Queue: {str(len(self.users_in_queue))}',
+                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
+                inline=False
+            )
+        else:
+            embed.add_field(
+                name=f'Queue Empty!',
+                value='To start the queue, type `;q` or `;queue`',
+                inline=False
+            )
+
+        await ctx.channel.send(embed=embed)
+
+    @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':
