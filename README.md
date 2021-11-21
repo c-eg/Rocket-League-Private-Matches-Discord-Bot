@@ -1,11 +1,10 @@
 # Rocket League Private Matches Discord Bot #
 [![License](https://img.shields.io/github/license/c-eg/Rocket-League-Private-Matches-Discord-Bot)](LICENSE)
 
-Currently under development.
+Currently being used on the [UEA Rocket League Discord](https://discord.gg/Gam9qwJRAe) server
 
-## Planned Features ##
+## Features ##
 - 6 person matches
-- 4 person matches
 - Multiple games on same server
 - Players can set their MMR
 - Teams can be decided with:
