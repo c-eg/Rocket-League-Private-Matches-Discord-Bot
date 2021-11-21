@@ -54,31 +54,17 @@ class MatchMakingRating(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @checkpeak.error
-    async def checkpeak_error(self, ctx, error):
-        if isinstance(error, commands.errors.MemberNotFound):
-            await ctx.channel.send("Please enter a valid user!")
-            return
-        else:
-            raise error
-
     @commands.command(
         aliases=['sp'],
         help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
         brief="Sets your peak mmr."
     )
-    async def setpeak(self, ctx: commands.Context, mmr):
+    async def setpeak(self, ctx: commands.Context, mmr: int):
         if ctx.channel.name != '6-mans-test-things':
             return
 
         if not mmr:
             await ctx.channel.send("Please enter an mmr!")
-            return
-
-        try:
-            mmr = int(mmr)
-        except:
-            await ctx.channel.send("Please enter a valid mmr!")
             return
 
         if not 1 <= mmr <= 3000:
