@@ -8,15 +8,8 @@ import time
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
 
-
-embed_template = discord.Embed(
-    title='Captains will now pick teams!',
-    colour=discord.Colour.teal()
-)
-embed_template.set_footer(
-    text='UEA Private Matches by curpha',
-    icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
-)
+from embed_temp import embed_temp
+embed_template = embed_temp.Embed_Template(embed_title='Captains will now pick teams!').emb_temp
 
 
 class CaptainsGame(Game):

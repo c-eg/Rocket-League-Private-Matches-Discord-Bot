@@ -15,14 +15,8 @@ from models.game_captains import CaptainsGame
 from models.game_random import RandomGame
 from db.database import record
 
-embed_template = discord.Embed(
-    title='Private Matches',
-    colour=discord.Colour.teal()
-)
-embed_template.set_footer(
-    text='UEA Private Matches by curpha',
-    icon_url='https://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/be/bed810f8bebd7be235b8f7176e3870de1006a6e5_full.jpg'
-)
+from embed_temp import embed_temp
+embed_template = embed_temp.Embed_Template(embed_title='Private Matches').emb_temp
 
 
 class Queue(commands.Cog):
