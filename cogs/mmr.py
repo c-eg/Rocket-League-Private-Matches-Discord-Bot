@@ -5,8 +5,8 @@ from discord.ext import commands
 
 from db import database
 
-from embed_temp import embed_temp
-embed_template = embed_temp.Embed_Template(embed_title='Private Matches').emb_temp
+from static import EmbedTemplate
+embed_template = EmbedTemplate(embed_title='Private Matches').emb_temp
 
 
 class MatchMakingRating(commands.Cog):

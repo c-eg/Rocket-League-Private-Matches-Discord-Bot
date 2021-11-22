@@ -8,8 +8,8 @@ import time
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
 
-from embed_temp import embed_temp
-embed_template = embed_temp.Embed_Template(embed_title='Captains will now pick teams!').emb_temp
+from static import EmbedTemplate
+embed_template = EmbedTemplate(embed_title='Captains will now pick teams!').emb_temp
 
 
 class CaptainsGame(Game):

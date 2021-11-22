@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import discord
 
-class Embed_Template:
+class EmbedTemplate:
     def __init__(self, embed_title):
         self.emb_temp = discord.Embed(
             title=embed_title, colour=discord.Colour.teal()

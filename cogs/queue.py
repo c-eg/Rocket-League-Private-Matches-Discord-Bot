@@ -15,8 +15,8 @@ from models.game_captains import CaptainsGame
 from models.game_random import RandomGame
 from db.database import record
 
-from embed_temp import embed_temp
-embed_template = embed_temp.Embed_Template(embed_title='Private Matches').emb_temp
+from static import EmbedTemplate
+embed_template = EmbedTemplate(embed_title='Private Matches').emb_temp
 
 
 class Queue(commands.Cog):
