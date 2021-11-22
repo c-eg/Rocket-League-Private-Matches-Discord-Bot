@@ -4,10 +4,12 @@ import discord
 from discord.ext import commands
 
 from db import database
-from static import EmbedTemplate
+from static.embed_template import EmbedTemplate
 
 
-embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
+embed_template = EmbedTemplate(
+    title="Private Matches", colour=discord.Colour.teal()
+).embed
 
 
 class MatchMakingRating(commands.Cog):

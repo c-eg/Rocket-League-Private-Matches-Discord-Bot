@@ -14,10 +14,12 @@ from models.game_balanced import BalancedGame
 from models.game_captains import CaptainsGame
 from models.game_random import RandomGame
 from db.database import record
-from static import EmbedTemplate
+from static.embed_template import EmbedTemplate
 
 
-embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
+embed_template = EmbedTemplate(
+    title="Private Matches", colour=discord.Colour.teal()
+).embed
 
 
 class Queue(commands.Cog):

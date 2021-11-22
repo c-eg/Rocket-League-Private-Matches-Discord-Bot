@@ -7,12 +7,12 @@ import time
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
-from static import EmbedTemplate
+from static.embed_template import EmbedTemplate
 
 
 embed_template = EmbedTemplate(
     title="Captains will now pick teams!", colour=discord.Colour.teal()
-)
+).embed
 
 
 class CaptainsGame(Game):

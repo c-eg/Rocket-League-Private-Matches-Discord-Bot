@@ -1,1 +1,1 @@
-from .embed_template import *
+from embed_template import EmbedTemplate
