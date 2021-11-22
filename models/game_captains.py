@@ -11,8 +11,8 @@ from static import EmbedTemplate
 
 
 embed_template = EmbedTemplate(
-    embed_title="Captains will now pick teams!", colour=discord.Colour.teal()
-).emb_temp
+    title="Captains will now pick teams!", colour=discord.Colour.teal()
+)
 
 
 class CaptainsGame(Game):

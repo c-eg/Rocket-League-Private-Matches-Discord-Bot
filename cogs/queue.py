@@ -17,9 +17,7 @@ from db.database import record
 from static import EmbedTemplate
 
 
-embed_template = EmbedTemplate(
-    embed_title="Private Matches", colour=discord.Colour.teal()
-).emb_temp
+embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
 
 class Queue(commands.Cog):

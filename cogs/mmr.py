@@ -7,9 +7,7 @@ from db import database
 from static import EmbedTemplate
 
 
-embed_template = EmbedTemplate(
-    title="Private Matches", colour=discord.Colour.teal()
-).emb_temp
+embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
 
 class MatchMakingRating(commands.Cog):
