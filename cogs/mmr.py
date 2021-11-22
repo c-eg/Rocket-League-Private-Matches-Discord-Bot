@@ -4,9 +4,12 @@ import discord
 from discord.ext import commands
 
 from db import database
-
 from static import EmbedTemplate
-embed_template = EmbedTemplate(embed_title='Private Matches').emb_temp
+
+
+embed_template = EmbedTemplate(
+    title="Private Matches", colour=discord.Colour.teal()
+).emb_temp
 
 
 class MatchMakingRating(commands.Cog):
@@ -14,17 +17,17 @@ class MatchMakingRating(commands.Cog):
         self.bot = bot
 
     @commands.command(
-        aliases=['cp'],
+        aliases=["cp"],
         help="Checks the peak mmr for yourself or the user you specifiy.",
-        brief="Checks a user's peak mmr."
+        brief="Checks a user's peak mmr.",
     )
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         embed = embed_template.copy()
 
-        sql = 'SELECT mmr FROM player WHERE discord_id = ?'
+        sql = "SELECT mmr FROM player WHERE discord_id = ?"
 
         if user:
             user_to_check = user
@@ -35,26 +38,27 @@ class MatchMakingRating(commands.Cog):
 
         if result is None:
             embed.add_field(
-                name='Match Making Rating!',
-                value=user_to_check.mention + ' has not set their MMR! Type `;setpeak <amount>` to set it.',
-                inline=False
+                name="Match Making Rating!",
+                value=user_to_check.mention
+                + " has not set their MMR! Type `;setpeak <amount>` to set it.",
+                inline=False,
             )
         else:
             embed.add_field(
-                name='Match Making Rating!',
-                value=user_to_check.mention + ': ' + str(result),
-                inline=False
+                name="Match Making Rating!",
+                value=user_to_check.mention + ": " + str(result),
+                inline=False,
             )
 
         await ctx.channel.send(embed=embed)
 
     @commands.command(
-        aliases=['sp'],
+        aliases=["sp"],
         help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
-        brief="Sets your peak mmr."
+        brief="Sets your peak mmr.",
     )
     async def setpeak(self, ctx: commands.Context, mmr: int):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         if not mmr:
@@ -65,24 +69,24 @@ class MatchMakingRating(commands.Cog):
             await ctx.channel.send("Please enter a valid mmr!")
             return
 
-        sql = 'SELECT * FROM player WHERE discord_id = ?'
+        sql = "SELECT * FROM player WHERE discord_id = ?"
         user = database.record(sql, ctx.author.id)
 
         # if user is db, update
         if user is None:
-            sql = 'INSERT INTO player (discord_id, mmr) VALUES (?, ?)'
+            sql = "INSERT INTO player (discord_id, mmr) VALUES (?, ?)"
             database.execute(sql, ctx.author.id, mmr)
         # else, add user to db
         else:
-            sql = 'UPDATE player SET mmr = ? WHERE discord_id = ?'
+            sql = "UPDATE player SET mmr = ? WHERE discord_id = ?"
             database.execute(sql, mmr, ctx.author.id)
 
         embed = embed_template.copy()
 
         embed.add_field(
-            name='Match Making Rating!',
+            name="Match Making Rating!",
             value=f"{ctx.author.mention} set their mmr to: {str(mmr)}",
-            inline=False
+            inline=False,
         )
 
         await ctx.channel.send(embed=embed)

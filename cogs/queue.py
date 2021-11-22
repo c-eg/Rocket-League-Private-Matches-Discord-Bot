@@ -14,9 +14,12 @@ from models.game_balanced import BalancedGame
 from models.game_captains import CaptainsGame
 from models.game_random import RandomGame
 from db.database import record
-
 from static import EmbedTemplate
-embed_template = EmbedTemplate(embed_title='Private Matches').emb_temp
+
+
+embed_template = EmbedTemplate(
+    embed_title="Private Matches", colour=discord.Colour.teal()
+).emb_temp
 
 
 class Queue(commands.Cog):
@@ -25,22 +28,24 @@ class Queue(commands.Cog):
         self.users_in_queue = OrderedDict()
 
     @commands.command(
-        aliases=['q'],
-        help="Joins the private matches queue.",
-        brief="Joins the queue."
+        aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue."
     )
     async def queue(self, ctx: commands.Context):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
-            await ctx.channel.send(f'You are already in the queue, {ctx.author.mention}.')
+            await ctx.channel.send(
+                f"You are already in the queue, {ctx.author.mention}."
+            )
             return
 
         res = record("SELECT * FROM player WHERE discord_id = ?", ctx.author.id)
 
         if res is None:
-            await ctx.channel.send(f'You have not set your mmr, please use: `;setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/')
+            await ctx.channel.send(
+                f"You have not set your mmr, please use: `;setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/"
+            )
             return
 
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
@@ -49,20 +54,23 @@ class Queue(commands.Cog):
 
         if len(self.users_in_queue) == 1:
             embed.add_field(
-                name='Queue Started!',
-                value=f'{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!',
-                inline=False
+                name="Queue Started!",
+                value=f"{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!",
+                inline=False,
             )
         else:
             embed.add_field(
-                name='User Joined the Queue!',
-                value=f'{ctx.author.mention} joined the queue, type `;q` or `;queue` to join!',
-                inline=False
+                name="User Joined the Queue!",
+                value=f"{ctx.author.mention} joined the queue, type `;q` or `;queue` to join!",
+                inline=False,
             )
             embed.add_field(
-                name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
-                inline=False
+                name=f"Users in Queue: {str(len(self.users_in_queue))}",
+                value=", ".join(
+                    player.get_discord_user().mention
+                    for player in self.users_in_queue.values()
+                ),
+                inline=False,
             )
 
         await ctx.channel.send(embed=embed)
@@ -86,14 +94,14 @@ class Queue(commands.Cog):
         players = game_handler.get_players()
 
         embed.add_field(
-            name='Users to Vote!',
-            value=', '.join(player.get_discord_user().mention for player in players),
-            inline=False
+            name="Users to Vote!",
+            value=", ".join(player.get_discord_user().mention for player in players),
+            inline=False,
         )
         embed.add_field(
-            name='Vote for Balancing Method!!',
-            value=f'🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams',
-            inline=False
+            name="Vote for Balancing Method!!",
+            value=f"🇧 for Balanced Teams\n\n🇨 for Captains\n\n🇷 for Random Teams",
+            inline=False,
         )
 
         message = await ctx.channel.send(embed=embed)
@@ -115,7 +123,9 @@ class Queue(commands.Cog):
 
         while len(users_voting) > 0 and listen_for_reaction:
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=time_start - time.time(), check=check)
+                reaction, user = await self.bot.wait_for(
+                    "reaction_add", timeout=time_start - time.time(), check=check
+                )
 
                 if reaction.emoji == "🇧":
                     balanced += 1
@@ -139,94 +149,105 @@ class Queue(commands.Cog):
         try:
             await game.assign_teams()
         except NoPlayerActionException:
-            await ctx.channel.send("A user did not complete their task in enough time. Game is cancelled.")
+            await ctx.channel.send(
+                "A user did not complete their task in enough time. Game is cancelled."
+            )
             return
 
         embed = embed_template.copy()
 
         embed.add_field(
-            name='Team 1',
-            value=', '.join(player.get_discord_user().mention for player in game.get_team_one()),
-            inline=False
+            name="Team 1",
+            value=", ".join(
+                player.get_discord_user().mention for player in game.get_team_one()
+            ),
+            inline=False,
         )
         embed.add_field(
-            name='Team 2',
-            value=', '.join(player.get_discord_user().mention for player in game.get_team_two()),
-            inline=False
+            name="Team 2",
+            value=", ".join(
+                player.get_discord_user().mention for player in game.get_team_two()
+            ),
+            inline=False,
         )
 
         await ctx.channel.send(embed=embed)
 
     @commands.command(
-        aliases=['l'],
+        aliases=["l"],
         help="Leaves the private matches queue.",
-        brief="Leaves the queue."
+        brief="Leaves the queue.",
     )
     async def leave(self, ctx: commands.Context):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         embed = embed_template.copy()
 
         if not self.users_in_queue.get(ctx.author.id, False):
-            await ctx.channel.send(f'You are not in the queue, {ctx.author.mention}')
+            await ctx.channel.send(f"You are not in the queue, {ctx.author.mention}")
             return
 
         del self.users_in_queue[ctx.author.id]
 
         embed.add_field(
-            name='User Left the Queue!',
-            value=f'{ctx.author.mention} left the queue.',
-            inline=False
+            name="User Left the Queue!",
+            value=f"{ctx.author.mention} left the queue.",
+            inline=False,
         )
 
         if len(self.users_in_queue) > 0:
             embed.add_field(
-                name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
-                inline=False
+                name=f"Users in Queue: {str(len(self.users_in_queue))}",
+                value=", ".join(
+                    player.get_discord_user().mention
+                    for player in self.users_in_queue.values()
+                ),
+                inline=False,
             )
         else:
             embed.add_field(
-                name=f'Queue Empty!',
-                value='To restart the queue, type `;q` or `;queue`',
-                inline=False
+                name=f"Queue Empty!",
+                value="To restart the queue, type `;q` or `;queue`",
+                inline=False,
             )
 
         await ctx.channel.send(embed=embed)
 
     @commands.command(
         help="Lists all the users in the private matches queue.",
-        brief="Lists users in the queue."
+        brief="Lists users in the queue.",
     )
     async def list(self, ctx: commands.Context):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         embed = embed_template.copy()
 
         if len(self.users_in_queue) > 0:
             embed.add_field(
-                name=f'Users in Queue: {str(len(self.users_in_queue))}',
-                value=', '.join(player.get_discord_user().mention for player in self.users_in_queue.values()),
-                inline=False
+                name=f"Users in Queue: {str(len(self.users_in_queue))}",
+                value=", ".join(
+                    player.get_discord_user().mention
+                    for player in self.users_in_queue.values()
+                ),
+                inline=False,
             )
         else:
             embed.add_field(
-                name=f'Queue Empty!',
-                value='To start the queue, type `;q` or `;queue`',
-                inline=False
+                name=f"Queue Empty!",
+                value="To start the queue, type `;q` or `;queue`",
+                inline=False,
             )
 
         await ctx.channel.send(embed=embed)
 
     @commands.command(
-        help="Clears all users from the queue.",
-        brief="Clears the queue."
+        help="Clears all users from the queue.", brief="Clears the queue."
     )
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
-        if ctx.channel.name != '6-mans-test-things':
+        if ctx.channel.name != "6-mans-test-things":
             return
 
         self.users_in_queue.clear()
@@ -234,9 +255,9 @@ class Queue(commands.Cog):
         embed = embed_template.copy()
 
         embed.add_field(
-            name='The queue has been cleared!',
-            value='Please type `;q` or `;queue` to restart the queue.',
-            inline=False
+            name="The queue has been cleared!",
+            value="Please type `;q` or `;queue` to restart the queue.",
+            inline=False,
         )
 
         await ctx.channel.send(embed=embed)

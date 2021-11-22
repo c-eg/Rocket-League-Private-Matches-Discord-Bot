@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import discord
 
+
 class EmbedTemplate:
-    def __init__(self, embed_title):
+    def __init__(self, title, colour):
         self.emb_temp = discord.Embed(
-            title=embed_title, colour=discord.Colour.teal()
+            title=title,
+            colour=colour,
         )
         self.emb_temp.set_footer(
             text="UEA Private Matches by curpha",

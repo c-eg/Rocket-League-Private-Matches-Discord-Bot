@@ -7,9 +7,12 @@ import time
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
-
 from static import EmbedTemplate
-embed_template = EmbedTemplate(embed_title='Captains will now pick teams!').emb_temp
+
+
+embed_template = EmbedTemplate(
+    embed_title="Captains will now pick teams!", colour=discord.Colour.teal()
+).emb_temp
 
 
 class CaptainsGame(Game):
@@ -28,14 +31,14 @@ class CaptainsGame(Game):
         embed = embed_template.copy()
 
         embed.add_field(
-            name=f'Captain 1!',
-            value=f'{captain_a.get_discord_user().mention}',
-            inline=False
+            name=f"Captain 1!",
+            value=f"{captain_a.get_discord_user().mention}",
+            inline=False,
         )
         embed.add_field(
-            name=f'Captain 2!',
-            value=f'{captain_b.get_discord_user().mention}',
-            inline=False
+            name=f"Captain 2!",
+            value=f"{captain_b.get_discord_user().mention}",
+            inline=False,
         )
 
         # CAPTAIN A FIRST PICK
@@ -53,15 +56,23 @@ class CaptainsGame(Game):
 
         while not listen_for_captain_a:
             try:
-                reply = await self.bot.wait_for(event='message', timeout=time_start - time.time(), check=lambda message: message.channel == disc_message.channel)
+                reply = await self.bot.wait_for(
+                    event="message",
+                    timeout=time_start - time.time(),
+                    check=lambda message: message.channel == disc_message.channel,
+                )
                 reply = int(reply)
 
                 if 1 <= reply <= 4:
                     listen_for_captain_a = False
-                    await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    await captain_a.get_discord_user().send(
+                        f"You picked: {self.players[reply - 1].get_discord_user().mention}"
+                    )
                     self.team_one.append(self.players.pop(reply - 1))
                 else:
-                    await captain_a.get_discord_user().send("Please enter a number between 1 and 4!")
+                    await captain_a.get_discord_user().send(
+                        "Please enter a number between 1 and 4!"
+                    )
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
@@ -81,15 +92,23 @@ class CaptainsGame(Game):
 
         while listen_for_captain_b:
             try:
-                reply = await self.bot.wait_for(event='message', timeout=time_start - time.time(), check=lambda message: message.channel == disc_message.channel)
+                reply = await self.bot.wait_for(
+                    event="message",
+                    timeout=time_start - time.time(),
+                    check=lambda message: message.channel == disc_message.channel,
+                )
                 reply = int(reply)
 
                 if 1 <= reply <= 3:
                     listen_for_captain_a = False
-                    await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    await captain_a.get_discord_user().send(
+                        f"You picked: {self.players[reply - 1].get_discord_user().mention}"
+                    )
                     self.team_two.append(self.players.pop(reply - 1))
                 else:
-                    await captain_a.get_discord_user().send("Please enter a number between 1 and 3!")
+                    await captain_a.get_discord_user().send(
+                        "Please enter a number between 1 and 3!"
+                    )
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
@@ -108,15 +127,23 @@ class CaptainsGame(Game):
 
         while listen_for_captain_b:
             try:
-                reply = await self.bot.wait_for(event='message', timeout=time_start - time.time(), check=lambda message: message.channel == disc_message.channel)
+                reply = await self.bot.wait_for(
+                    event="message",
+                    timeout=time_start - time.time(),
+                    check=lambda message: message.channel == disc_message.channel,
+                )
                 reply = int(reply)
 
                 if 1 <= reply <= 2:
                     listen_for_captain_a = False
-                    await captain_a.get_discord_user().send(f"You picked: {self.players[reply - 1].get_discord_user().mention}")
+                    await captain_a.get_discord_user().send(
+                        f"You picked: {self.players[reply - 1].get_discord_user().mention}"
+                    )
                     self.team_two.append(self.players.pop(reply - 1))
                 else:
-                    await captain_a.get_discord_user().send("Please enter the number 1 or 2!")
+                    await captain_a.get_discord_user().send(
+                        "Please enter the number 1 or 2!"
+                    )
             except TimeoutError:
                 listen_for_captain_a = False
                 raise NoPlayerActionException()
