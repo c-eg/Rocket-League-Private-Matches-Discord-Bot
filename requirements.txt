@@ -6,7 +6,7 @@ attrs==21.2.0
 backports.entry-points-selectable==1.1.1
 backports.zoneinfo==0.2.1
 chardet==4.0.0
-charset-normalizer==2.0.7
+charset-normalizer==2.0.8
 discord.py==1.7.3
 distlib==0.3.3
 filelock==3.4.0
