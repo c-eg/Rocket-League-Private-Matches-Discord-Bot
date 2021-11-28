@@ -36,7 +36,7 @@ class Queue(commands.Cog):
         brief="Joins the queue."
     )
 
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1,10,commands.BucketType.user)
     async def queue(self, ctx: commands.Context):
         if ctx.channel.name != '6-mans-test-things':
             return
