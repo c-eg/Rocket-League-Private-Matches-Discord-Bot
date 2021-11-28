@@ -13,7 +13,7 @@ load_dotenv(find_dotenv())  # load .env file
 bot = commands.Bot(command_prefix=';')
 
 # load cogs into list
-COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
+COGS = [path.split(os.sep)[-1][:-3] for path in glob('./cogs/*.py')]
 
 
 @bot.event
