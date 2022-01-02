@@ -28,7 +28,7 @@ class Queue(commands.Cog):
     @commands.command(aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
@@ -180,7 +180,7 @@ class Queue(commands.Cog):
         brief="Leaves the queue.",
     )
     async def leave(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         embed = embed_template.copy()
@@ -220,7 +220,7 @@ class Queue(commands.Cog):
         brief="Lists users in the queue.",
     )
     async def list(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         embed = embed_template.copy()
@@ -246,7 +246,7 @@ class Queue(commands.Cog):
     @commands.command(help="Clears all users from the queue.", brief="Clears the queue.")
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         self.users_in_queue.clear()
@@ -271,7 +271,7 @@ class Queue(commands.Cog):
     # @commands.command()
     # @commands.has_permissions(administrator=True)
     # async def tq(self, ctx: commands.Context):
-    #     if ctx.channel.name != "6-mans-test-things":
+    #     if ctx.channel.name != "6-mans":
     #         return
 
     #     user_one = await self.bot.fetch_user(260169773357203456)

@@ -21,7 +21,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         embed = embed_template.copy()
@@ -57,7 +57,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def setpeak(self, ctx: commands.Context, mmr: int):
-        if ctx.channel.name != "6-mans-test-things":
+        if ctx.channel.name != "6-mans":
             return
 
         if not mmr:
