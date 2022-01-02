@@ -25,11 +25,8 @@ class Queue(commands.Cog):
         self.bot = bot
         self.users_in_queue = OrderedDict()
 
-    @commands.command(
-        aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue."
-    )
-
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.command(aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue.")
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context):
         if ctx.channel.name != "6-mans-test-things":
             return
@@ -83,8 +80,9 @@ class Queue(commands.Cog):
 
             game_handler = GameHandler(6, game_players)
 
-            loop = asyncio.get_event_loop()
-            loop.create_task(self.create_game(ctx, game_handler))
+            # loop = asyncio.get_event_loop()
+            # loop.create_task(self.create_game(ctx, game_handler))
+            await self.create_game(ctx, game_handler)
 
     async def create_game(self, ctx, game_handler):
         """
@@ -133,6 +131,9 @@ class Queue(commands.Cog):
                     captains += 1
                 elif reaction.emoji == "🇷":
                     random += 1
+
+                if balanced == 4 or captains == 4 or random == 4:
+                    listen_for_reaction = False
 
                 if user in users_voting:
                     users_voting.remove(user)
@@ -242,9 +243,7 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(
-        help="Clears all users from the queue.", brief="Clears the queue."
-    )
+    @commands.command(help="Clears all users from the queue.", brief="Clears the queue.")
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
         if ctx.channel.name != "6-mans-test-things":
@@ -268,6 +267,23 @@ class Queue(commands.Cog):
             await ctx.send("You do not have permission to use `;clear`!")
         else:
             raise error
+
+    @commands.command()
+    async def tq(self, ctx: commands.Context):
+        if ctx.channel.name != "6-mans-test-things":
+            return
+
+        user_one = await self.bot.fetch_user(260169773357203456)
+        user_two = await self.bot.fetch_user(199583437764427777)
+        user_three = await self.bot.fetch_user(386283781436211211)
+        user_four = await self.bot.fetch_user(190198777334857728)
+        user_five = await self.bot.fetch_user(684864344072519681)
+
+        self.users_in_queue[user_one.id] = Player(user_one, 200)
+        self.users_in_queue[user_two.id] = Player(user_two, 300)
+        self.users_in_queue[user_three.id] = Player(user_three, 100)
+        self.users_in_queue[user_four.id] = Player(user_four, 50)
+        self.users_in_queue[user_five.id] = Player(user_five, 250)
 
 
 def setup(bot):
