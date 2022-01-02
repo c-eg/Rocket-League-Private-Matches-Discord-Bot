@@ -268,22 +268,23 @@ class Queue(commands.Cog):
         else:
             raise error
 
-    @commands.command()
-    async def tq(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans-test-things":
-            return
+    # @commands.command()
+    # @commands.has_permissions(administrator=True)
+    # async def tq(self, ctx: commands.Context):
+    #     if ctx.channel.name != "6-mans-test-things":
+    #         return
 
-        user_one = await self.bot.fetch_user(260169773357203456)
-        user_two = await self.bot.fetch_user(199583437764427777)
-        user_three = await self.bot.fetch_user(386283781436211211)
-        user_four = await self.bot.fetch_user(190198777334857728)
-        user_five = await self.bot.fetch_user(684864344072519681)
+    #     user_one = await self.bot.fetch_user(260169773357203456)
+    #     user_two = await self.bot.fetch_user(199583437764427777)
+    #     user_three = await self.bot.fetch_user(386283781436211211)
+    #     user_four = await self.bot.fetch_user(190198777334857728)
+    #     user_five = await self.bot.fetch_user(684864344072519681)
 
-        self.users_in_queue[user_one.id] = Player(user_one, 200)
-        self.users_in_queue[user_two.id] = Player(user_two, 300)
-        self.users_in_queue[user_three.id] = Player(user_three, 100)
-        self.users_in_queue[user_four.id] = Player(user_four, 50)
-        self.users_in_queue[user_five.id] = Player(user_five, 250)
+    #     self.users_in_queue[user_one.id] = Player(user_one, 200)
+    #     self.users_in_queue[user_two.id] = Player(user_two, 300)
+    #     self.users_in_queue[user_three.id] = Player(user_three, 100)
+    #     self.users_in_queue[user_four.id] = Player(user_four, 50)
+    #     self.users_in_queue[user_five.id] = Player(user_five, 250)
 
 
 def setup(bot):
