@@ -19,7 +19,7 @@ class MatchMakingRating(commands.Cog):
         help="Checks the peak mmr for yourself or the user you specifiy.",
         brief="Checks a user's peak mmr.",
     )
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
         if ctx.channel.name != "6-mans-test-things":
             return
@@ -38,14 +38,13 @@ class MatchMakingRating(commands.Cog):
         if result is None:
             embed.add_field(
                 name="Match Making Rating!",
-                value=user_to_check.mention
-                + " has not set their MMR! Type `;setpeak <amount>` to set it.",
+                value=f"{user_to_check.mention} has not set their MMR! Type `;setpeak <amount>` to set it.",
                 inline=False,
             )
         else:
             embed.add_field(
                 name="Match Making Rating!",
-                value=user_to_check.mention + ": " + str(result),
+                value=f"{user_to_check.mention}: {str(result)}",
                 inline=False,
             )
 
@@ -56,7 +55,7 @@ class MatchMakingRating(commands.Cog):
         help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
         brief="Sets your peak mmr.",
     )
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def setpeak(self, ctx: commands.Context, mmr: int):
         if ctx.channel.name != "6-mans-test-things":
             return
