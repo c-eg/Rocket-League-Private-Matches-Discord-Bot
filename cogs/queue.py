@@ -64,8 +64,7 @@ class Queue(commands.Cog):
             embed.add_field(
                 name=f"Users in Queue: {str(len(self.users_in_queue))}",
                 value=", ".join(
-                    player.get_discord_user().mention
-                    for player in self.users_in_queue.values()
+                    player.get_discord_user().mention for player in self.users_in_queue.values()
                 ),
                 inline=False,
             )
@@ -80,8 +79,6 @@ class Queue(commands.Cog):
 
             game_handler = GameHandler(6, game_players)
 
-            # loop = asyncio.get_event_loop()
-            # loop.create_task(self.create_game(ctx, game_handler))
             await self.create_game(ctx, game_handler)
 
     async def create_game(self, ctx, game_handler):
@@ -102,6 +99,7 @@ class Queue(commands.Cog):
             inline=False,
         )
 
+        # add reactions to message
         message = await ctx.channel.send(embed=embed)
         await message.add_reaction("🇧")
         await message.add_reaction("🇨")
@@ -109,40 +107,94 @@ class Queue(commands.Cog):
 
         users_voting = [player.get_discord_user() for player in players]
 
-        balanced = 0
-        captains = 0
-        random = 0
+        balanced_count = 0
+        captains_count = 0
+        random_count = 0
+
+        votes = {}
+        users_not_voted = [player.get_discord_user() for player in players]
 
         time_start = time.time() + 120
         listen_for_reaction = True
 
         def check(reaction, user):
-            return user in users_voting and message == reaction.message
+            """ Check to process reaction """
+            if user not in users_voting:
+                return False
 
-        while len(users_voting) > 0 and listen_for_reaction:
+            if message != reaction.message:
+                return False
+
+            reactions = ["🇧", "🇨", "🇷"]
+
+            if reaction.emoji not in reactions:
+                return False
+
+            return True
+
+        # listen for reactions on the message from users in the game
+        while listen_for_reaction:
             try:
                 reaction, user = await self.bot.wait_for(
                     "reaction_add", timeout=time_start - time.time(), check=check
                 )
 
+                # remove user from users not voted
+                if user in users_not_voted:
+                    users_not_voted.remove(user)
+
+                # remove old vote
+                old_vote = votes.get(user)
+
+                if old_vote:
+                    if old_vote == "🇧":
+                        balanced_count -= 1
+                    elif old_vote == "🇨":
+                        captains_count -= 1
+                    elif old_vote == "🇷":
+                        random_count -= 1
+
+                # add new vote
+                votes[user] = reaction.emoji
+
                 if reaction.emoji == "🇧":
-                    balanced += 1
+                    balanced_count += 1
                 elif reaction.emoji == "🇨":
-                    captains += 1
+                    captains_count += 1
                 elif reaction.emoji == "🇷":
-                    random += 1
+                    random_count += 1
 
-                if balanced == 4 or captains == 4 or random == 4:
+                # remove reaction from message
+                await reaction.remove(user)
+
+                # update message with users who voted for what
+                balanced = ", ".join(user.mention for user, vote in votes.items() if vote == '🇧')
+                captains = ", ".join(user.mention for user, vote in votes.items() if vote == '🇨')
+                random = ", ".join(user.mention for user, vote in votes.items() if vote == '🇷')
+
+                new_embed = embed_template.copy()
+
+                new_embed.add_field(
+                    name="Users to Vote!",
+                    value=", ".join(user.mention for user in users_not_voted),
+                    inline=False,
+                )
+                new_embed.add_field(
+                    name="Vote for Balancing Method!!",
+                    value=f"🇧 for Balanced Teams\n{balanced}\n\n🇨 for Captains\n{captains}\n\n🇷 for Random Teams\n{random}",
+                    inline=False,
+                )
+
+                await message.edit(embed=new_embed)
+
+                if balanced_count == 4 or captains_count == 4 or random_count == 4:
                     listen_for_reaction = False
-
-                if user in users_voting:
-                    users_voting.remove(user)
             except asyncio.TimeoutError:
                 listen_for_reaction = False
 
-        if balanced > captains and balanced > random:
+        if balanced_count > captains_count and balanced_count > random_count:
             game = BalancedGame(players)
-        elif captains > balanced and captains > random:
+        elif captains_count > balanced_count and captains_count > random_count:
             game = CaptainsGame(players, ctx, self.bot)
         else:
             game = RandomGame(players)
@@ -159,16 +211,12 @@ class Queue(commands.Cog):
 
         embed.add_field(
             name="Team 1",
-            value=", ".join(
-                player.get_discord_user().mention for player in game.get_team_one()
-            ),
+            value=", ".join(player.get_discord_user().mention for player in game.get_team_one()),
             inline=False,
         )
         embed.add_field(
             name="Team 2",
-            value=", ".join(
-                player.get_discord_user().mention for player in game.get_team_two()
-            ),
+            value=", ".join(player.get_discord_user().mention for player in game.get_team_two()),
             inline=False,
         )
 
@@ -200,10 +248,7 @@ class Queue(commands.Cog):
         if len(self.users_in_queue) > 0:
             embed.add_field(
                 name=f"Users in Queue: {str(len(self.users_in_queue))}",
-                value=", ".join(
-                    player.get_discord_user().mention
-                    for player in self.users_in_queue.values()
-                ),
+                value=", ".join(player.get_discord_user().mention for player in self.users_in_queue.values()),
                 inline=False,
             )
         else:
