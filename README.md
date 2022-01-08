@@ -19,8 +19,8 @@ Currently being used on the [UEA Rocket League Discord](https://discord.gg/Gam9q
 2. Make sure you have the latest version of [Python 3](https://www.python.org/downloads/) installed
 3. Install the libraries from requirements.txt
    - ```pip3 install -r requirements.txt```
-4. Create a [Discord bot](https://discord.com/developers/docs/intro) (click on 'Applications')
-5. Create a .env file on the same level as main.py and put the Discord bot's token into it e.g. ```BOT_TOKEN=XXXXXXXXX```
+4. Create a [Discord bot](https://discord.com/developers/docs/intro) (click on 'Applications'), getting the token
+5. Rename .env_template to .env, adding values for each of the settings
 6. Run the bot from ```main.py```
 
 ## License ##
