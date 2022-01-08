@@ -17,9 +17,9 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, commands.CommandOnCooldown):
             message = f"{ctx.command} is on cooldown. Please try again after {round(error.retry_after, 1)} seconds."
         elif isinstance(error, commands.MissingPermissions):
-            message = f"You are missing the required permissions to use {ctx.command}!"
+            message = f"You are missing the required permissions to use {ctx.command}"
         elif isinstance(error, commands.UserInputError):
-            message = f"Invalid input! Please use `;help {ctx.command}` for help."
+            message = f"Invalid input! Please use `{self.bot.get_prefix()}help {ctx.command}` for help."
         else:
             message = "Oh no! Something went wrong while running the command!"
 

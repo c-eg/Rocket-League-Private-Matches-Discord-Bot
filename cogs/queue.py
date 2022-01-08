@@ -7,6 +7,7 @@ from collections import OrderedDict
 import time
 import asyncio
 from models.no_player_action_exception import NoPlayerActionException
+import os
 
 from models.player import Player
 from models.game_handler import GameHandler
@@ -28,7 +29,7 @@ class Queue(commands.Cog):
     @commands.command(aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
@@ -41,7 +42,7 @@ class Queue(commands.Cog):
 
         if res is None:
             await ctx.channel.send(
-                f"You have not set your mmr, please use: `;setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/"
+                f"You have not set your mmr, please use: `{self.bot.get_prefix()}setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/"
             )
             return
 
@@ -52,13 +53,13 @@ class Queue(commands.Cog):
         if len(self.users_in_queue) == 1:
             embed.add_field(
                 name="Queue Started!",
-                value=f"{ctx.author.mention} has started a queue, type `;q` or `;queue` to join!",
+                value=f"{ctx.author.mention} has started a queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to join!",
                 inline=False,
             )
         else:
             embed.add_field(
                 name="User Joined the Queue!",
-                value=f"{ctx.author.mention} joined the queue, type `;q` or `;queue` to join!",
+                value=f"{ctx.author.mention} joined the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to join!",
                 inline=False,
             )
             embed.add_field(
@@ -228,7 +229,7 @@ class Queue(commands.Cog):
         brief="Leaves the queue.",
     )
     async def leave(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         embed = embed_template.copy()
@@ -254,7 +255,7 @@ class Queue(commands.Cog):
         else:
             embed.add_field(
                 name=f"Queue Empty!",
-                value="To restart the queue, type `;q` or `;queue`",
+                value=f"To restart the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue`",
                 inline=False,
             )
 
@@ -265,7 +266,7 @@ class Queue(commands.Cog):
         brief="Lists users in the queue.",
     )
     async def list(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         embed = embed_template.copy()
@@ -282,7 +283,7 @@ class Queue(commands.Cog):
         else:
             embed.add_field(
                 name=f"Queue Empty!",
-                value="To start the queue, type `;q` or `;queue`",
+                value=f"To start the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue`",
                 inline=False,
             )
 
@@ -291,7 +292,7 @@ class Queue(commands.Cog):
     @commands.command(help="Clears all users from the queue.", brief="Clears the queue.")
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         self.users_in_queue.clear()
@@ -300,7 +301,7 @@ class Queue(commands.Cog):
 
         embed.add_field(
             name="The queue has been cleared!",
-            value="Please type `;q` or `;queue` to restart the queue.",
+            value=f"Please type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to restart the queue.",
             inline=False,
         )
 
@@ -309,14 +310,14 @@ class Queue(commands.Cog):
     @clear.error
     async def clear_error(self, error, ctx):
         if isinstance(error, error.MissingPermissions):
-            await ctx.send("You do not have permission to use `;clear`!")
+            await ctx.send(f"You do not have permission to use `{self.bot.get_prefix()}clear`")
         else:
             raise error
 
     # @commands.command()
     # @commands.has_permissions(administrator=True)
     # async def tq(self, ctx: commands.Context):
-    #     if ctx.channel.name != "6-mans":
+    #     if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
     #         return
 
     #     user_one = await self.bot.fetch_user(260169773357203456)

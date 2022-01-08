@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+import os
 
 from db import database
 from static.embed_template import EmbedTemplate
@@ -21,7 +22,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         embed = embed_template.copy()
@@ -38,7 +39,7 @@ class MatchMakingRating(commands.Cog):
         if result is None:
             embed.add_field(
                 name="Match Making Rating!",
-                value=f"{user_to_check.mention} has not set their MMR! Type `;setpeak <amount>` to set it.",
+                value=f"{user_to_check.mention} has not set their MMR! Type `{self.bot.get_prefix()}setpeak <amount>` to set it.",
                 inline=False,
             )
         else:
@@ -57,7 +58,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def setpeak(self, ctx: commands.Context, mmr: int):
-        if ctx.channel.name != "6-mans":
+        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
         if not mmr:

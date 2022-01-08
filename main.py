@@ -3,14 +3,14 @@
 from glob import glob
 import os
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from dotenv import load_dotenv, find_dotenv
+from apscheduler.schedulers import asyncio
+import dotenv
 from db import database
 
 from discord.ext import commands
 
-load_dotenv(find_dotenv())  # load .env file
-bot = commands.Bot(command_prefix=';')
+dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
+bot = commands.Bot(command_prefix=os.environ.get('COMMAND_PREFIX'))
 
 # load cogs into list
 COGS = [path.split(os.sep)[-1][:-3] for path in glob('./cogs/*.py')]
@@ -19,7 +19,7 @@ COGS = [path.split(os.sep)[-1][:-3] for path in glob('./cogs/*.py')]
 @bot.event
 async def on_ready():
     # start scheduler to auto save db
-    scheduler = AsyncIOScheduler()
+    scheduler = asyncio.AsyncIOScheduler()
     database.auto_save(scheduler)
     scheduler.start()
     print('Bot successfully started!')
