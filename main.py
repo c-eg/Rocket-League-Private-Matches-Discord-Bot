@@ -26,9 +26,11 @@ async def on_ready():
 
 
 for cog in COGS:
-    if cog != "__init__":
-        bot.load_extension(f'cogs.{cog}')
-        print(f'Loaded {cog}')
+    if cog == "__init__":
+        continue
+
+    bot.load_extension(f'cogs.{cog}')
+    print(f'Loaded {cog}')
 
 
 bot.run(os.environ.get('BOT_TOKEN'))  # run bot
