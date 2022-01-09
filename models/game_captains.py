@@ -82,7 +82,7 @@ class CaptainsGame(Game):
         counter = 1
 
         for player in self.players:
-            captain_a_message += f"{counter}) {player.get_discord_user().mention}\n"
+            captain_b_message += f"{counter}) {player.get_discord_user().mention}\n"
             counter += 1
 
         disc_message = await captain_b.get_discord_user().send(captain_b_message)
@@ -100,17 +100,17 @@ class CaptainsGame(Game):
                 reply = int(reply)
 
                 if 1 <= reply <= 3:
-                    listen_for_captain_a = False
-                    await captain_a.get_discord_user().send(
+                    listen_for_captain_b = False
+                    await captain_b.get_discord_user().send(
                         f"You picked: {self.players[reply - 1].get_discord_user().mention}"
                     )
                     self.team_two.append(self.players.pop(reply - 1))
                 else:
-                    await captain_a.get_discord_user().send(
+                    await captain_b.get_discord_user().send(
                         "Please enter a number between 1 and 3!"
                     )
             except TimeoutError:
-                listen_for_captain_a = False
+                listen_for_captain_b = False
                 raise NoPlayerActionException()
 
         # CAPTAIN B SECOND PICK
@@ -118,7 +118,7 @@ class CaptainsGame(Game):
         counter = 1
 
         for player in self.players:
-            captain_a_message += f"{counter}) {player.get_discord_user().mention}\n"
+            captain_b_message += f"{counter}) {player.get_discord_user().mention}\n"
             counter += 1
 
         disc_message = await captain_b.get_discord_user().send(captain_b_message)
@@ -135,17 +135,17 @@ class CaptainsGame(Game):
                 reply = int(reply)
 
                 if 1 <= reply <= 2:
-                    listen_for_captain_a = False
-                    await captain_a.get_discord_user().send(
+                    listen_for_captain_b = False
+                    await captain_b.get_discord_user().send(
                         f"You picked: {self.players[reply - 1].get_discord_user().mention}"
                     )
                     self.team_two.append(self.players.pop(reply - 1))
                 else:
-                    await captain_a.get_discord_user().send(
+                    await captain_b.get_discord_user().send(
                         "Please enter the number 1 or 2!"
                     )
             except TimeoutError:
-                listen_for_captain_a = False
+                listen_for_captain_b = False
                 raise NoPlayerActionException()
 
         # ASSIGN CAPTAIN A (Team 1) LAST PLAYER
