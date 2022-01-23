@@ -12,6 +12,7 @@ Currently being used on the [UEA Rocket League Discord](https://discord.gg/Gam9q
   - [x] Two captains
   - [x] Balanced by MMR
   - [x] Random
+- [x] Queue for x amount of minutes
 - [ ] Slash commands
 
 ## Setting up for local development ##
