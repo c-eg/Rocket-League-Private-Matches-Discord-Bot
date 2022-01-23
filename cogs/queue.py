@@ -56,7 +56,7 @@ class Queue(commands.Cog):
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
 
         # if user is only in queue for certain amount of time, create task to check in said time
-        if time_to_queue is not False:
+        if time_to_queue is not False and time_to_queue > 0:
             asyncio.gather(self._remove_user(ctx, time_to_queue))
 
         embed = embed_template.copy()
