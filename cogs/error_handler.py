@@ -12,6 +12,8 @@ class ErrorHandler(commands.Cog):
         """
         Global error handler.
         """
+        prefix = await self.bot.get_prefix(ctx.message)
+
         if isinstance(error, commands.CommandNotFound):
             return
         elif isinstance(error, commands.CommandOnCooldown):
@@ -19,9 +21,10 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, commands.MissingPermissions):
             message = f"You are missing the required permissions to use {ctx.command}"
         elif isinstance(error, commands.UserInputError):
-            message = f"Invalid input! Please use `{self.bot.get_prefix()}help {ctx.command}` for help."
+            message = f"Invalid input! Please use `{prefix}help {ctx.command}` for help."
         else:
             message = "Oh no! Something went wrong while running the command!"
+            print(error)
 
         await ctx.channel.send(message, delete_after=30)
 

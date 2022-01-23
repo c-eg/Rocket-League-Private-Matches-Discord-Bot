@@ -25,6 +25,7 @@ class MatchMakingRating(commands.Cog):
         if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
+        prefix = await self.bot.get_prefix(ctx.message)
         embed = embed_template.copy()
 
         sql = "SELECT mmr FROM player WHERE discord_id = ?"
@@ -39,7 +40,7 @@ class MatchMakingRating(commands.Cog):
         if result is None:
             embed.add_field(
                 name="Match Making Rating!",
-                value=f"{user_to_check.mention} has not set their MMR! Type `{self.bot.get_prefix()}setpeak <amount>` to set it.",
+                value=f"{user_to_check.mention} has not set their MMR! Type `{prefix}setpeak <amount>` to set it.",
                 inline=False,
             )
         else:

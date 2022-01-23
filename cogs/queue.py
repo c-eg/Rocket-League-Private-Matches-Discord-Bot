@@ -26,9 +26,14 @@ class Queue(commands.Cog):
         self.bot = bot
         self.users_in_queue = OrderedDict()
 
+    async def _remove_user(self, ctx, minutes):
+        if self.users_in_queue.get(ctx.author.id, False):
+            await asyncio.sleep(minutes * 60)
+            await ctx.invoke(self.bot.get_command('leave'))
+
     @commands.command(aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue.")
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def queue(self, ctx: commands.Context):
+    async def queue(self, ctx: commands.Context, time_to_queue: int = None):
         if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
@@ -38,28 +43,34 @@ class Queue(commands.Cog):
             )
             return
 
+        prefix = await self.bot.get_prefix(ctx.message)
         res = record("SELECT * FROM player WHERE discord_id = ?", ctx.author.id)
 
         if res is None:
             await ctx.channel.send(
-                f"You have not set your mmr, please use: `{self.bot.get_prefix()}setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/"
+                f"You have not set your mmr, please use: `{prefix}setpeak <amount>`!\n\nIf you need to find what your mmr is, go here: https://rocketleague.tracker.network/"
             )
             return
 
+        # add user to queue
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
+
+        # if user is only in queue for certain amount of time, create task to check in said time
+        if time_to_queue is not False:
+            asyncio.gather(self._remove_user(ctx, time_to_queue))
 
         embed = embed_template.copy()
 
         if len(self.users_in_queue) == 1:
             embed.add_field(
                 name="Queue Started!",
-                value=f"{ctx.author.mention} has started a queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to join!",
+                value=f"{ctx.author.mention} has started a queue, type `{prefix}q` or `{prefix}queue` to join!",
                 inline=False,
             )
         else:
             embed.add_field(
                 name="User Joined the Queue!",
-                value=f"{ctx.author.mention} joined the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to join!",
+                value=f"{ctx.author.mention} joined the queue, type `{prefix}q` or `{prefix}queue` to join!",
                 inline=False,
             )
             embed.add_field(
@@ -120,15 +131,9 @@ class Queue(commands.Cog):
 
         def check(reaction, user):
             """ Check to process reaction """
-            if user not in users_voting:
-                return False
-
-            if message != reaction.message:
-                return False
-
             reactions = ["🇧", "🇨", "🇷"]
 
-            if reaction.emoji not in reactions:
+            if user not in users_voting or message != reaction.message or reaction.emoji not in reactions:
                 return False
 
             return True
@@ -232,6 +237,7 @@ class Queue(commands.Cog):
         if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
+        prefix = await self.bot.get_prefix(ctx.message)
         embed = embed_template.copy()
 
         if not self.users_in_queue.get(ctx.author.id, False):
@@ -255,7 +261,7 @@ class Queue(commands.Cog):
         else:
             embed.add_field(
                 name=f"Queue Empty!",
-                value=f"To restart the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue`",
+                value=f"To restart the queue, type `{prefix}q` or `{prefix}queue`",
                 inline=False,
             )
 
@@ -269,6 +275,7 @@ class Queue(commands.Cog):
         if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
             return
 
+        prefix = await self.bot.get_prefix(ctx.message)
         embed = embed_template.copy()
 
         if len(self.users_in_queue) > 0:
@@ -283,7 +290,7 @@ class Queue(commands.Cog):
         else:
             embed.add_field(
                 name=f"Queue Empty!",
-                value=f"To start the queue, type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue`",
+                value=f"To start the queue, type `{prefix}q` or `{prefix}queue`",
                 inline=False,
             )
 
@@ -297,11 +304,12 @@ class Queue(commands.Cog):
 
         self.users_in_queue.clear()
 
+        prefix = await self.bot.get_prefix(ctx.message)
         embed = embed_template.copy()
 
         embed.add_field(
             name="The queue has been cleared!",
-            value=f"Please type `{self.bot.get_prefix()}q` or `{self.bot.get_prefix()}queue` to restart the queue.",
+            value=f"Please type `{prefix}q` or `{prefix}queue` to restart the queue.",
             inline=False,
         )
 
@@ -309,8 +317,10 @@ class Queue(commands.Cog):
 
     @clear.error
     async def clear_error(self, error, ctx):
+        prefix = await self.bot.get_prefix(ctx.message)
+
         if isinstance(error, error.MissingPermissions):
-            await ctx.send(f"You do not have permission to use `{self.bot.get_prefix()}clear`")
+            await ctx.send(f"You do not have permission to use `{prefix}clear`")
         else:
             raise error
 
