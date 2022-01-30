@@ -3,7 +3,7 @@ import discord
 
 
 class EmbedTemplate(discord.Embed):
-    def __init__(self, title, colour):
+    def __init__(self, title: str, colour: discord.Colour):
         super().__init__(title=title, colour=colour)
 
         self.set_footer(

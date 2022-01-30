@@ -2,9 +2,11 @@
 
 from abc import ABC, abstractmethod
 
+from models.player import Player
+
 
 class Game(ABC):
-    def __init__(self, players: list):
+    def __init__(self, players: list[Player]):
         self.team_one = []
         self.team_two = []
         self.players = players
@@ -14,8 +16,8 @@ class Game(ABC):
     async def assign_teams(self):
         pass
 
-    def get_team_one(self):
+    def get_team_one(self) -> list[Player]:
         return self.team_one
 
-    def get_team_two(self):
+    def get_team_two(self) -> list[Player]:
         return self.team_two

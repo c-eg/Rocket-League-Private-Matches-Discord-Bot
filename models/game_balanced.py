@@ -3,10 +3,11 @@
 from itertools import permutations
 
 from models.game import Game
+from models.player import Player
 
 
 class BalancedGame(Game):
-    def __init__(self, players):
+    def __init__(self, players: list[Player]):
         super(BalancedGame, self).__init__(players)
 
     async def assign_teams(self):

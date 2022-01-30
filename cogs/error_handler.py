@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from discord.ext import commands
 
 
@@ -28,7 +30,7 @@ class ErrorHandler(commands.Cog):
             message = "Oh no! Something went wrong while running the command!"
             print(error)
 
-        await ctx.channel.send(message, delete_after=30)
+        await ctx.channel.send(message)
 
 
 def setup(bot: commands.Bot):

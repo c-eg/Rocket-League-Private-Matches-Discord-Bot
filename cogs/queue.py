@@ -24,7 +24,7 @@ class Queue(commands.Cog):
         self.bot = bot
         self.users_in_queue = OrderedDict()
 
-    async def _remove_user(self, ctx, minutes):
+    async def _remove_user(self, ctx: commands.Context, minutes: int):
         if self.users_in_queue.get(ctx.author.id, False):
             await asyncio.sleep(minutes * 60)
             await ctx.invoke(self.bot.get_command("leave"))
@@ -94,7 +94,7 @@ class Queue(commands.Cog):
 
             await self.create_game(ctx, game_handler)
 
-    async def create_game(self, ctx, game_handler):
+    async def create_game(self, ctx: commands.Context, game_handler: GameHandler):
         """
         Creates a game for the users who are in the queue.
         """
@@ -130,7 +130,7 @@ class Queue(commands.Cog):
         time_start = time.time() + 120
         listen_for_reaction = True
 
-        def check(reaction, user):
+        def check(reaction: discord.Reaction, user: discord.User) -> bool:
             """Check to process reaction"""
             reactions = ["🇧", "🇨", "🇷"]
 
@@ -336,7 +336,7 @@ class Queue(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @clear.error
-    async def clear_error(self, error, ctx):
+    async def clear_error(self, error, ctx: commands.Context):
         prefix = await self.bot.get_prefix(ctx.message)
 
         if isinstance(error, error.MissingPermissions):
@@ -363,5 +363,5 @@ class Queue(commands.Cog):
     #     self.users_in_queue[user_five.id] = Player(user_five, 250)
 
 
-def setup(bot):
+def setup(bot: commands.Bot):
     bot.add_cog(Queue(bot))

@@ -92,5 +92,5 @@ class MatchMakingRating(commands.Cog):
         await ctx.channel.send(embed=embed)
 
 
-def setup(bot):
+def setup(bot: commands.Bot):
     bot.add_cog(MatchMakingRating(bot))

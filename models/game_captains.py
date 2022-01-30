@@ -9,6 +9,7 @@ from static.embed_template import EmbedTemplate
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
+from models.player import Player
 
 embed_template = EmbedTemplate(
     title="Captains will now pick teams!", colour=discord.Colour.teal()
@@ -16,7 +17,7 @@ embed_template = EmbedTemplate(
 
 
 class CaptainsGame(Game):
-    def __init__(self, players, ctx: commands.Context, bot):
+    def __init__(self, players: list[Player], ctx: commands.Context, bot: commands.Bot):
         super(CaptainsGame, self).__init__(players)
         self.ctx = ctx
         self.bot = bot

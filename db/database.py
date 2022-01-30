@@ -3,6 +3,7 @@
 from os.path import isfile
 from sqlite3 import connect
 
+from apscheduler.schedulers import asyncio
 from apscheduler.triggers.cron import CronTrigger
 
 DB_PATH = "./db/database.db"
@@ -42,7 +43,7 @@ def commit():
     cxn.commit()
 
 
-def auto_save(scheduler):
+def auto_save(scheduler: asyncio.AsyncIOScheduler):
     """
     Commits data to the database
     :param scheduler: scheduler
@@ -129,7 +130,7 @@ def multiexec(command, valueset):
     cur.executemany(command, valueset)
 
 
-def scriptexec(path):
+def scriptexec(path: str):
     """
     Executes multiple SQL statements at once
     :param path: path to SQL statements
