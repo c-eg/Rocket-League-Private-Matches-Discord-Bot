@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import discord
-from discord.ext import commands
 import os
 
+import discord
 from db import database
+from discord.ext import commands
 from static.embed_template import EmbedTemplate
-
 
 embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
@@ -22,7 +21,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         prefix = await self.bot.get_prefix(ctx.message)
@@ -59,7 +58,7 @@ class MatchMakingRating(commands.Cog):
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def setpeak(self, ctx: commands.Context, mmr: int):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         if not mmr:

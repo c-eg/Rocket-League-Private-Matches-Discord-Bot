@@ -17,7 +17,9 @@ class BalancedGame(Game):
         for perm in perms:
             temp_one = perm[:3]
             temp_two = perm[-3:]
-            temp_range = abs(sum([player.get_mmr() for player in temp_one]) - sum([player.get_mmr() for player in temp_two]))
+            temp_one_sum = sum([player.get_mmr() for player in temp_one])
+            temp_two_sum = sum([player.get_mmr() for player in temp_two])
+            temp_range = abs(temp_one_sum - temp_two_sum)
 
             if temp_range < range:
                 self.team_one = temp_one

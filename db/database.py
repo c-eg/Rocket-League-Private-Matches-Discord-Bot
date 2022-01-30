@@ -16,6 +16,7 @@ def with_commit(func):
     """
     Commits to the database, usage: @with_commit
     """
+
     def inner(*args, **kwargs):
         func(*args, **kwargs)
         commit()

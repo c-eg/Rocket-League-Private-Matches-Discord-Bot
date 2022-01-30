@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class GameHandler(object):
     def __init__(self, game_size: int, players: list):
         self.game_size = game_size

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import time
+from asyncio import TimeoutError
+
 import discord
 from discord.ext import commands
-from asyncio import TimeoutError
-import time
+from static.embed_template import EmbedTemplate
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
-from static.embed_template import EmbedTemplate
-
 
 embed_template = EmbedTemplate(
     title="Captains will now pick teams!", colour=discord.Colour.teal()

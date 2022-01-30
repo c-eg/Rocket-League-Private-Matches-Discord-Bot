@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from models.game import Game
 import random
+
+from models.game import Game
 
 
 class RandomGame(Game):

@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import discord
-from discord.ext import commands
-
-from collections import OrderedDict
-import time
 import asyncio
-from models.no_player_action_exception import NoPlayerActionException
 import os
+import time
+from collections import OrderedDict
 
-from models.player import Player
-from models.game_handler import GameHandler
+import discord
+from db.database import record
+from discord.ext import commands
 from models.game_balanced import BalancedGame
 from models.game_captains import CaptainsGame
+from models.game_handler import GameHandler
 from models.game_random import RandomGame
-from db.database import record
+from models.no_player_action_exception import NoPlayerActionException
+from models.player import Player
 from static.embed_template import EmbedTemplate
-
 
 embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
@@ -29,12 +27,14 @@ class Queue(commands.Cog):
     async def _remove_user(self, ctx, minutes):
         if self.users_in_queue.get(ctx.author.id, False):
             await asyncio.sleep(minutes * 60)
-            await ctx.invoke(self.bot.get_command('leave'))
+            await ctx.invoke(self.bot.get_command("leave"))
 
-    @commands.command(aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue.")
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(
+        aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue."
+    )
+    @commands.cooldown(2, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context, time_to_queue: int = None):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
@@ -76,7 +76,8 @@ class Queue(commands.Cog):
             embed.add_field(
                 name=f"Users in Queue: {str(len(self.users_in_queue))}",
                 value=", ".join(
-                    player.get_discord_user().mention for player in self.users_in_queue.values()
+                    player.get_discord_user().mention
+                    for player in self.users_in_queue.values()
                 ),
                 inline=False,
             )
@@ -130,10 +131,14 @@ class Queue(commands.Cog):
         listen_for_reaction = True
 
         def check(reaction, user):
-            """ Check to process reaction """
+            """Check to process reaction"""
             reactions = ["🇧", "🇨", "🇷"]
 
-            if user not in users_voting or message != reaction.message or reaction.emoji not in reactions:
+            if (
+                user not in users_voting
+                or message != reaction.message
+                or reaction.emoji not in reactions
+            ):
                 return False
 
             return True
@@ -174,9 +179,15 @@ class Queue(commands.Cog):
                 await reaction.remove(user)
 
                 # update message with users who voted for what
-                balanced = ", ".join(user.mention for user, vote in votes.items() if vote == '🇧')
-                captains = ", ".join(user.mention for user, vote in votes.items() if vote == '🇨')
-                random = ", ".join(user.mention for user, vote in votes.items() if vote == '🇷')
+                balanced = ", ".join(
+                    user.mention for user, vote in votes.items() if vote == "🇧"
+                )
+                captains = ", ".join(
+                    user.mention for user, vote in votes.items() if vote == "🇨"
+                )
+                random = ", ".join(
+                    user.mention for user, vote in votes.items() if vote == "🇷"
+                )
 
                 new_embed = embed_template.copy()
 
@@ -217,12 +228,16 @@ class Queue(commands.Cog):
 
         embed.add_field(
             name="Team 1",
-            value=", ".join(player.get_discord_user().mention for player in game.get_team_one()),
+            value=", ".join(
+                player.get_discord_user().mention for player in game.get_team_one()
+            ),
             inline=False,
         )
         embed.add_field(
             name="Team 2",
-            value=", ".join(player.get_discord_user().mention for player in game.get_team_two()),
+            value=", ".join(
+                player.get_discord_user().mention for player in game.get_team_two()
+            ),
             inline=False,
         )
 
@@ -234,7 +249,7 @@ class Queue(commands.Cog):
         brief="Leaves the queue.",
     )
     async def leave(self, ctx: commands.Context):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         prefix = await self.bot.get_prefix(ctx.message)
@@ -255,7 +270,10 @@ class Queue(commands.Cog):
         if len(self.users_in_queue) > 0:
             embed.add_field(
                 name=f"Users in Queue: {str(len(self.users_in_queue))}",
-                value=", ".join(player.get_discord_user().mention for player in self.users_in_queue.values()),
+                value=", ".join(
+                    player.get_discord_user().mention
+                    for player in self.users_in_queue.values()
+                ),
                 inline=False,
             )
         else:
@@ -272,7 +290,7 @@ class Queue(commands.Cog):
         brief="Lists users in the queue.",
     )
     async def list(self, ctx: commands.Context):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         prefix = await self.bot.get_prefix(ctx.message)
@@ -296,10 +314,12 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(help="Clears all users from the queue.", brief="Clears the queue.")
+    @commands.command(
+        help="Clears all users from the queue.", brief="Clears the queue."
+    )
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
-        if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
+        if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         self.users_in_queue.clear()
