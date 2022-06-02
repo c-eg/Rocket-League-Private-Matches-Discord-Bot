@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+from typing import List
 
 from models.player import Player
 
 
 class Game(ABC):
-    def __init__(self, players: list[Player]):
+    def __init__(self, players: List[Player]):
         self.team_one = []
         self.team_two = []
         self.players = players
@@ -16,8 +17,8 @@ class Game(ABC):
     async def assign_teams(self):
         pass
 
-    def get_team_one(self) -> list[Player]:
+    def get_team_one(self) -> List[Player]:
         return self.team_one
 
-    def get_team_two(self) -> list[Player]:
+    def get_team_two(self) -> List[Player]:
         return self.team_two

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import random
+from typing import List
 
 from models.game import Game
 from models.player import Player
 
 
 class RandomGame(Game):
-    def __init__(self, players: list[Player]):
+    def __init__(self, players: List[Player]):
         super(RandomGame, self).__init__(players)
 
     async def assign_teams(self):
