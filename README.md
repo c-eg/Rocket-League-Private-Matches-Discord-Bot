@@ -3,6 +3,9 @@
 
 Currently being used on the [UEA Rocket League Discord](https://discord.gg/Gam9qwJRAe) server
 
+## Preview ##
+![image](https://user-images.githubusercontent.com/68134729/183295677-5a356790-edb4-4af1-b691-2348468d71d0.png)
+
 ## Features Implemented ##
 - [x] 6 person queue
 - [ ] 4 Person queue
