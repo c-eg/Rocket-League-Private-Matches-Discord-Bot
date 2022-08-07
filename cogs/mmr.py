@@ -4,6 +4,7 @@ import os
 
 import discord
 from db import database
+from discord.commands import Option, slash_command
 from discord.ext import commands
 from static.embed_template import EmbedTemplate
 
@@ -13,32 +14,32 @@ embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.te
 class MatchMakingRating(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
-    @commands.slash_command(
+
+    @slash_command(
         help="Checks the peak mmr for yourself or the user you specifiy.",
         brief="Checks a user's peak mmr.",
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def checkpeak(self, ctx: commands.Context, user: discord.Member = None):
+    async def checkpeak(
+        self,
+        ctx: commands.Context,
+        user: Option(discord.Member, "User", required=False),
+    ):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
-        prefix = await self.bot.get_prefix(ctx.message)
         embed = embed_template.copy()
 
         sql = "SELECT mmr FROM player WHERE discord_id = ?"
 
-        if user:
-            user_to_check = user
-        else:
-            user_to_check = ctx.author
+        user_to_check = user or ctx.author
 
         result = database.field(sql, user_to_check.id)
 
         if result is None:
             embed.add_field(
                 name="Match Making Rating!",
-                value=f"{user_to_check.mention} has not set their MMR! Type `{prefix}setpeak <amount>` to set it.",
+                value=f"{user_to_check.mention} has not set their MMR! Type `/setpeak <amount>` to set it.",
                 inline=False,
             )
         else:
@@ -48,23 +49,19 @@ class MatchMakingRating(commands.Cog):
                 inline=False,
             )
 
-        await ctx.channel.send(embed=embed)
+        await ctx.respond(embed=embed)
 
-    @commands.slash_command(
+    @slash_command(
         help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
         brief="Sets your peak mmr.",
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def setpeak(self, ctx: commands.Context, mmr: int):
+    async def setpeak(
+        self,
+        ctx: commands.Context,
+        mmr: Option(int, "MMR", required=True, min_value=100, max_value=2900),
+    ):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
-            return
-
-        if not mmr:
-            await ctx.channel.send("Please enter an mmr!")
-            return
-
-        if not 1 <= mmr <= 3000:
-            await ctx.channel.send("Please enter a valid mmr!")
             return
 
         sql = "SELECT * FROM player WHERE discord_id = ?"
@@ -87,7 +84,7 @@ class MatchMakingRating(commands.Cog):
             inline=False,
         )
 
-        await ctx.channel.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 
 def setup(bot: commands.Bot):
