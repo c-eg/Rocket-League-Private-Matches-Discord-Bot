@@ -16,8 +16,7 @@ class MatchMakingRating(commands.Cog):
         self.bot = bot
 
     @slash_command(
-        help="Checks the peak mmr for yourself or the user you specifiy.",
-        brief="Checks a user's peak mmr.",
+        description="Checks the peak mmr for yourself or the user you specifiy.",
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkpeak(
@@ -52,8 +51,7 @@ class MatchMakingRating(commands.Cog):
         await ctx.respond(embed=embed)
 
     @slash_command(
-        help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
-        brief="Sets your peak mmr.",
+        description="Sets your peak mmr used for balancing in the private matches team-deciding methods."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def setpeak(

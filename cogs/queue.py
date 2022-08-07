@@ -31,8 +31,7 @@ class Queue(commands.Cog):
             await ctx.invoke(self.bot.get_command("leave"))
 
     @slash_command(
-        help="Joins the private matches queue.",
-        brief="Joins the queue."
+        description="Joins the private matches queue."
     )
     @commands.cooldown(2, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context, time_to_queue: Option(int, "Time to queue", required=False, min_value=1)):
@@ -245,8 +244,7 @@ class Queue(commands.Cog):
         await ctx.respond(embed=embed)
 
     @slash_command(
-        help="Leaves the private matches queue.",
-        brief="Leaves the queue.",
+        description="Leaves the private matches queue."
     )
     async def leave(self, ctx: commands.Context):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
@@ -285,8 +283,7 @@ class Queue(commands.Cog):
         await ctx.respond(embed=embed)
 
     @commands.slash_command(
-        help="Lists all the users in the private matches queue.",
-        brief="Lists users in the queue.",
+        description="Lists all the users in the private matches queue."
     )
     async def list(self, ctx: commands.Context):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
@@ -313,8 +310,7 @@ class Queue(commands.Cog):
         await ctx.respond(embed=embed)
 
     @slash_command(
-        help="Clears all users from the queue.",
-        brief="Clears the queue."
+        description="Clears all users from the queue."
     )
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
