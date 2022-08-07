@@ -29,8 +29,9 @@ class Queue(commands.Cog):
             await asyncio.sleep(minutes * 60)
             await ctx.invoke(self.bot.get_command("leave"))
 
-    @commands.command(
-        aliases=["q"], help="Joins the private matches queue.", brief="Joins the queue."
+    @commands.slash_command(
+        help="Joins the private matches queue.",
+        brief="Joins the queue."
     )
     @commands.cooldown(2, 10, commands.BucketType.user)
     async def queue(self, ctx: commands.Context, time_to_queue: int = None):
@@ -243,8 +244,7 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(
-        aliases=["l"],
+    @commands.slash_command(
         help="Leaves the private matches queue.",
         brief="Leaves the queue.",
     )
@@ -285,7 +285,7 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(
+    @commands.slash_command(
         help="Lists all the users in the private matches queue.",
         brief="Lists users in the queue.",
     )
@@ -314,8 +314,9 @@ class Queue(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(
-        help="Clears all users from the queue.", brief="Clears the queue."
+    @commands.slash_command(
+        help="Clears all users from the queue.",
+        brief="Clears the queue."
     )
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):

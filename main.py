@@ -3,14 +3,14 @@
 import os
 from glob import glob
 
+import discord
 import dotenv
 from apscheduler.schedulers import asyncio
-from discord.ext import commands
 
 from db import database
 
 dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
-bot = commands.Bot(command_prefix=os.environ.get("COMMAND_PREFIX"))
+bot = discord.Bot()
 
 # load cogs into list
 COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]

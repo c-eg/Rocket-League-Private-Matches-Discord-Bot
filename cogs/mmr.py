@@ -13,9 +13,8 @@ embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.te
 class MatchMakingRating(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    @commands.command(
-        aliases=["cp"],
+    
+    @commands.slash_command(
         help="Checks the peak mmr for yourself or the user you specifiy.",
         brief="Checks a user's peak mmr.",
     )
@@ -51,8 +50,7 @@ class MatchMakingRating(commands.Cog):
 
         await ctx.channel.send(embed=embed)
 
-    @commands.command(
-        aliases=["sp"],
+    @commands.slash_command(
         help="Sets your peak mmr used for balancing in the private matches team-deciding methods.",
         brief="Sets your peak mmr.",
     )
