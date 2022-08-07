@@ -13,7 +13,7 @@ Currently being used on the [UEA Rocket League Discord](https://discord.gg/Gam9q
   - [x] Balanced by MMR
   - [x] Random
 - [x] Queue for x amount of minutes
-- [ ] Slash commands
+- [x] Slash commands
 
 ## Setting up for local development ##
 1. Fork this repository
