@@ -15,6 +15,10 @@ from models.game_handler import GameHandler
 from models.game_random import RandomGame
 from models.no_player_action_exception import NoPlayerActionException
 from models.player import Player
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class Queue(commands.Cog):
@@ -24,6 +28,7 @@ class Queue(commands.Cog):
 
     async def _remove_user(self, ctx: commands.Context, minutes: int):
         if self.users_in_queue.get(ctx.author.id, False):
+            logger.info(f"{ctx.author} set a timer to remove them from the queue after {minutes} minutes")
             await asyncio.sleep(minutes * 60)
             await ctx.invoke(self.bot.get_command("leave"))
 
@@ -51,8 +56,9 @@ class Queue(commands.Cog):
 
         # add user to queue
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
+        logger.info(f"{ctx.author} joined the queue")
 
-        # if user is only in queue for certain amount of time, create task to check in said time
+        # if the user only wants to queue for a certain amount of time, create task to remove from queue after time has passed
         if time_to_queue:
             asyncio.gather(self._remove_user(ctx, time_to_queue))
 
@@ -97,6 +103,9 @@ class Queue(commands.Cog):
         """
         Creates a game for the users who are in the queue.
         """
+        users_voting = [player.get_discord_user() for player in players]
+        logger.info(f"Game started with users: {users_voting}")
+        
         embed = discord.Embed(
             title="Rocket League Private Matches", colour=discord.Colour.teal()
         )
@@ -118,8 +127,6 @@ class Queue(commands.Cog):
         await message.add_reaction("🇧")
         await message.add_reaction("🇨")
         await message.add_reaction("🇷")
-
-        users_voting = [player.get_discord_user() for player in players]
 
         balanced_count = 0
         captains_count = 0
@@ -190,7 +197,9 @@ class Queue(commands.Cog):
                     user.mention for user, vote in votes.items() if vote == "🇷"
                 )
 
-                new_embed = discord.Embed(title="Rocket League Private Matches", colour=discord.Colour.teal())
+                new_embed = discord.Embed(
+                    title="Rocket League Private Matches", colour=discord.Colour.teal()
+                )
 
                 new_embed.add_field(
                     name="Users to Vote!",
@@ -225,7 +234,9 @@ class Queue(commands.Cog):
             )
             return
 
-        embed = discord.Embed(title="Rocket League Private Matches", colour=discord.Colour.teal())
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         embed.add_field(
             name="Team 1",
@@ -258,6 +269,8 @@ class Queue(commands.Cog):
             return
 
         del self.users_in_queue[ctx.author.id]
+
+        logger.info(f"User: {ctx.author} left the queue")
 
         embed.add_field(
             name="User Left the Queue!",
@@ -319,6 +332,7 @@ class Queue(commands.Cog):
             return
 
         self.users_in_queue.clear()
+        logger.info(f"{ctx.author} cleared the queue")
 
         embed = discord.Embed(
             title="Rocket League Private Matches", colour=discord.Colour.teal()

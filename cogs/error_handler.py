@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ErrorHandler(commands.Cog):
@@ -24,6 +27,7 @@ class ErrorHandler(commands.Cog):
             message = "Oh no! Something went wrong while running the command!"
             print(error)
 
+        logger.error(message)
         await ctx.respond(message)
 
 

@@ -45,11 +45,11 @@ def commit():
 
 def auto_save(scheduler: asyncio.AsyncIOScheduler):
     """
-    Commits data to the database
+    Commits data to the database every 5 minutes
     :param scheduler: scheduler
     :return: void
     """
-    scheduler.add_job(commit, CronTrigger(second=0))
+    scheduler.add_job(commit, CronTrigger(minute="*/5"))
 
 
 def close():

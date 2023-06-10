@@ -9,11 +9,12 @@ from apscheduler.schedulers import asyncio
 
 from db import database
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 dotenv.load_dotenv(dotenv.find_dotenv())
 bot = discord.Bot()
-
-# load cogs into list
-COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
 
 
 @bot.event
@@ -22,15 +23,22 @@ async def on_ready():
     scheduler = asyncio.AsyncIOScheduler()
     database.auto_save(scheduler)
     scheduler.start()
-    print("Bot successfully started!")
+    logger.info("Bot successfully started!")
 
 
-for cog in COGS:
-    if cog == "__init__":
-        continue
+def main():
+    # load cogs into list
+    COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
 
-    bot.load_extension(f"cogs.{cog}")
-    print(f"Loaded {cog}")
+    for cog in COGS:
+        if cog == "__init__":
+            continue
 
+        bot.load_extension(f"cogs.{cog}")
+        logger.info(f"Loaded {cog}")
 
-bot.run(os.environ.get("BOT_TOKEN"))
+    bot.run(os.environ.get("BOT_TOKEN"))
+
+if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+    main()

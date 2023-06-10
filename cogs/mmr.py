@@ -6,6 +6,9 @@ import discord
 from db import database
 from discord.commands import Option, slash_command
 from discord.ext import commands
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MatchMakingRating(commands.Cog):
@@ -47,6 +50,8 @@ class MatchMakingRating(commands.Cog):
                 inline=False,
             )
 
+        logger.info(f"User: {ctx.author}, checked the peak mmr of: {user_to_check}")
+
         await ctx.respond(embed=embed)
 
     @slash_command(
@@ -82,6 +87,8 @@ class MatchMakingRating(commands.Cog):
             value=f"{ctx.author.mention} set their mmr to: {str(mmr)}",
             inline=False,
         )
+
+        logger.info(f"User: {ctx.author}, set their peak mmr to: {mmr}")
 
         await ctx.respond(embed=embed)
 

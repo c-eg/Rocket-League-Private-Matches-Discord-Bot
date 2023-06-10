@@ -8,7 +8,7 @@ class Player:
         self.user = discord_user
         self.mmr = mmr
 
-    def get_discord_user(self) -> int:
+    def get_discord_user(self) -> Member:
         return self.user
 
     def get_mmr(self) -> int:
