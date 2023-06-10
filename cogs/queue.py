@@ -15,9 +15,6 @@ from models.game_handler import GameHandler
 from models.game_random import RandomGame
 from models.no_player_action_exception import NoPlayerActionException
 from models.player import Player
-from static.embed_template import EmbedTemplate
-
-embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
 
 class Queue(commands.Cog):
@@ -30,18 +27,18 @@ class Queue(commands.Cog):
             await asyncio.sleep(minutes * 60)
             await ctx.invoke(self.bot.get_command("leave"))
 
-    @slash_command(
-        description="Joins the private matches queue."
-    )
+    @slash_command(description="Joins the private matches queue.")
     @commands.cooldown(2, 10, commands.BucketType.user)
-    async def queue(self, ctx: commands.Context, time_to_queue: Option(int, "Time to queue", required=False, min_value=1)):
+    async def queue(
+        self,
+        ctx: commands.Context,
+        time_to_queue: Option(int, "Time to queue", required=False, min_value=1),
+    ):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
         if self.users_in_queue.get(ctx.author.id, False):
-            await ctx.respond(
-                f"You are already in the queue, {ctx.author.mention}."
-            )
+            await ctx.respond(f"You are already in the queue, {ctx.author.mention}.")
             return
 
         res = record("SELECT * FROM player WHERE discord_id = ?", ctx.author.id)
@@ -59,7 +56,9 @@ class Queue(commands.Cog):
         if time_to_queue:
             asyncio.gather(self._remove_user(ctx, time_to_queue))
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         if len(self.users_in_queue) == 1:
             embed.add_field(
@@ -98,7 +97,9 @@ class Queue(commands.Cog):
         """
         Creates a game for the users who are in the queue.
         """
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
         players = game_handler.get_players()
 
         embed.add_field(
@@ -189,7 +190,7 @@ class Queue(commands.Cog):
                     user.mention for user, vote in votes.items() if vote == "🇷"
                 )
 
-                new_embed = embed_template.copy()
+                new_embed = discord.Embed(title="Rocket League Private Matches", colour=discord.Colour.teal())
 
                 new_embed.add_field(
                     name="Users to Vote!",
@@ -224,7 +225,7 @@ class Queue(commands.Cog):
             )
             return
 
-        embed = embed_template.copy()
+        embed = discord.Embed(title="Rocket League Private Matches", colour=discord.Colour.teal())
 
         embed.add_field(
             name="Team 1",
@@ -243,14 +244,14 @@ class Queue(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(
-        description="Leaves the private matches queue."
-    )
+    @slash_command(description="Leaves the private matches queue.")
     async def leave(self, ctx: commands.Context):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         if not self.users_in_queue.get(ctx.author.id, False):
             await ctx.respond(f"You are not in the queue, {ctx.author.mention}")
@@ -289,7 +290,9 @@ class Queue(commands.Cog):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         if len(self.users_in_queue) > 0:
             embed.add_field(
@@ -309,9 +312,7 @@ class Queue(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(
-        description="Clears all users from the queue."
-    )
+    @slash_command(description="Clears all users from the queue.")
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx: commands.Context):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
@@ -319,7 +320,9 @@ class Queue(commands.Cog):
 
         self.users_in_queue.clear()
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         embed.add_field(
             name="The queue has been cleared!",
@@ -335,24 +338,6 @@ class Queue(commands.Cog):
             await ctx.send(f"You do not have permission to use `/clear`")
         else:
             raise error
-
-    # @slash_command()
-    # @commands.has_permissions(administrator=True)
-    # async def tq(self, ctx: commands.Context):
-    #     if ctx.channel.name != os.environ.get('6_MAN_CHANNEL'):
-    #         return
-
-    #     user_one = await self.bot.fetch_user(260169773357203456)
-    #     user_two = await self.bot.fetch_user(199583437764427777)
-    #     user_three = await self.bot.fetch_user(386283781436211211)
-    #     user_four = await self.bot.fetch_user(190198777334857728)
-    #     user_five = await self.bot.fetch_user(684864344072519681)
-
-    #     self.users_in_queue[user_one.id] = Player(user_one, 200)
-    #     self.users_in_queue[user_two.id] = Player(user_two, 300)
-    #     self.users_in_queue[user_three.id] = Player(user_three, 100)
-    #     self.users_in_queue[user_four.id] = Player(user_four, 50)
-    #     self.users_in_queue[user_five.id] = Player(user_five, 250)
 
 
 def setup(bot: commands.Bot):

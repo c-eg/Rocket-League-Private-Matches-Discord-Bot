@@ -6,9 +6,6 @@ import discord
 from db import database
 from discord.commands import Option, slash_command
 from discord.ext import commands
-from static.embed_template import EmbedTemplate
-
-embed_template = EmbedTemplate(title="Private Matches", colour=discord.Colour.teal())
 
 
 class MatchMakingRating(commands.Cog):
@@ -27,7 +24,9 @@ class MatchMakingRating(commands.Cog):
         if ctx.channel.name != os.environ.get("6_MAN_CHANNEL"):
             return
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         sql = "SELECT mmr FROM player WHERE discord_id = ?"
 
@@ -74,7 +73,9 @@ class MatchMakingRating(commands.Cog):
             sql = "UPDATE player SET mmr = ? WHERE discord_id = ?"
             database.execute(sql, mmr, ctx.author.id)
 
-        embed = embed_template.copy()
+        embed = discord.Embed(
+            title="Rocket League Private Matches", colour=discord.Colour.teal()
+        )
 
         embed.add_field(
             name="Match Making Rating!",

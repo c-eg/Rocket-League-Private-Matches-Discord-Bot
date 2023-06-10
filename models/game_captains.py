@@ -6,15 +6,10 @@ from typing import List
 
 import discord
 from discord.ext import commands
-from static.embed_template import EmbedTemplate
 
 from models.game import Game
 from models.no_player_action_exception import NoPlayerActionException
 from models.player import Player
-
-embed_template = EmbedTemplate(
-    title="Captains will now pick teams!", colour=discord.Colour.teal()
-)
 
 
 class CaptainsGame(Game):
@@ -30,7 +25,7 @@ class CaptainsGame(Game):
         captain_a = self.players.pop(0)
         captain_b = self.players.pop(0)
 
-        embed = embed_template.copy()
+        embed = discord.Embed(title="Rocket League Private Matches", colour=discord.Colour.teal())
 
         embed.add_field(
             name=f"Captain 1!",

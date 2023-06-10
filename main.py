@@ -9,7 +9,7 @@ from apscheduler.schedulers import asyncio
 
 from db import database
 
-dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
+dotenv.load_dotenv(dotenv.find_dotenv())
 bot = discord.Bot()
 
 # load cogs into list
@@ -33,4 +33,4 @@ for cog in COGS:
     print(f"Loaded {cog}")
 
 
-bot.run(os.environ.get("BOT_TOKEN"))  # run bot
+bot.run(os.environ.get("BOT_TOKEN"))
