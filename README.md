@@ -1,5 +1,5 @@
 # Rocket League Private Matches Discord Bot
-[![License](https://img.shields.io/github/license/c-eg/Rocket-League-Private-Matches-Discord-Bot)](LICENSE)
+A discord bot to organise teams for private matches based on the user's set mmr.
 
 ## Preview
 ![image](https://user-images.githubusercontent.com/68134729/183295677-5a356790-edb4-4af1-b691-2348468d71d0.png)
