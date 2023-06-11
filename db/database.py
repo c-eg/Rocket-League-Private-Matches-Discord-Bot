@@ -6,8 +6,8 @@ from sqlite3 import connect
 from apscheduler.schedulers import asyncio
 from apscheduler.triggers.cron import CronTrigger
 
-DB_PATH = "./bot/db/database.db"
-DDL_PATH = "./bot/db/DDL.sql"
+DB_PATH = "./db/database.db"
+DDL_PATH = "./db/DDL.sql"
 
 cxn = connect(DB_PATH, check_same_thread=False)
 cur = cxn.cursor()
