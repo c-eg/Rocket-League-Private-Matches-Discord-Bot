@@ -56,7 +56,7 @@ class Queue(commands.Cog):
 
         # add user to queue
         self.users_in_queue[ctx.author.id] = Player(ctx.author, res[1])
-        logger.info(f"{ctx.author} joined the queue")
+        logger.info(f"User: {ctx.author} joined the queue")
 
         # if the user only wants to queue for a certain amount of time, create task to remove from queue after time has passed
         if time_to_queue:

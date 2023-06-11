@@ -28,7 +28,7 @@ async def on_ready():
 
 def main():
     # load cogs into list
-    COGS = [path.split(os.sep)[-1][:-3] for path in glob("./cogs/*.py")]
+    COGS = [path.split(os.sep)[-1][:-3] for path in glob("./bot/cogs/*.py")]
 
     for cog in COGS:
         if cog == "__init__":
