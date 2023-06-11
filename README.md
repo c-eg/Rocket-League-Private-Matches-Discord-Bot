@@ -15,13 +15,21 @@ A discord bot to organise teams for private matches based on the user's set mmr.
 - [x] Queue for x amount of minutes
 - [x] Slash commands
 
+## Deploying for production
+1. Copy & rename .env_template to .env, adding values for each of the settings
+2. Install [Docker](https://docs.docker.com/engine/install/)
+3. To build the docker image, run
+   - ```docker build --tag rlpmdb .```
+4. To deploy the bot in detatched mode, run
+   - ```docker run --detach rlpmdb```
+
 ## Setting up for local development
 1. Fork this repository
 2. Install [Python 3.11](https://www.python.org/downloads/)
 3. Install the libraries from requirements.txt
    - ```pip3 install -r requirements.txt```
 4. Create a [Discord bot](https://discord.com/developers/docs/intro) (click on 'Applications'), getting the token
-5. Rename .env_template to .env, adding values for each of the settings
+5. Copy & rename .env_template to .env, adding values for each of the settings
 6. Run the bot from ```main.py```
 
 ## License
